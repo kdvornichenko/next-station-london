@@ -69,20 +69,28 @@ type CardComponents = {
 }
 
 // Функция для генерации компонентов Image
-const createCardComponents = (images: {
-	[key in Shape]: StaticImageData
-}): CardComponents => {
+const createCardComponents = (
+	images: {
+		[key in Shape]: StaticImageData
+	},
+	color: Color
+): CardComponents => {
 	const components = {} as CardComponents
 
 	;(Object.keys(images) as Array<Shape>).forEach(shape => {
 		components[shape] = () => (
-			<Image
-				src={images[shape].src}
-				width={400}
-				height={240}
-				alt={shape}
-				className={styles.card}
-			/>
+			<div
+				className={styles.card__wrapper}
+				{...(color === 'Red' ? { 'data-card-red': '' } : {})}
+			>
+				<Image
+					src={images[shape].src}
+					width={400}
+					height={240}
+					alt={shape}
+					className={styles.card}
+				/>
+			</div>
 		)
 	})
 
@@ -91,8 +99,8 @@ const createCardComponents = (images: {
 
 // Создание объектов Cards с использованием функции createCardComponents
 const Cards: { [key in Color]: CardComponents } = {
-	Default: createCardComponents(imageData.Default),
-	Red: createCardComponents(imageData.Red),
+	Default: createCardComponents(imageData.Default, 'Default'),
+	Red: createCardComponents(imageData.Red, 'Red'),
 }
 
 export default Cards
