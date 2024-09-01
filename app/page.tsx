@@ -3,46 +3,52 @@
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import Cards from '@/components/Cards'
 import styles from '@/styles/main.module.scss'
-import AbilityAny from '@/assets/ability-any.png'
-import AbilityRepeat from '@/assets/ability-repeat.png'
-import AbilityBranch from '@/assets/ability-branch.png'
-import AbilityDouble from '@/assets/ability-bouble.png'
+import {
+	AbilityBranch,
+	AbilityDouble,
+	AbilityRepeat,
+	AblilityAny,
+} from '@/components/abilities'
 
 export default function Home() {
 	const [movedCards, setMovedCards] = useState<Element[]>([])
 	const [redCardsCounter, setRedCardsCounter] = useState<number>(0)
+	const [refreshCardsCounter, setRefreshCardsCounter] = useState<number>(0)
+	const [isModalActive, setIsModalActive] = useState<boolean>(false)
 	const cardsContainerRef: MutableRefObject<HTMLElement | null> = useRef(null)
 	const cardsArea = useRef<HTMLDivElement | null>(null)
 
-	const [colors, setColors] = useState<string[]>([
-		'pink',
-		'blue',
-		'green',
-		'purple',
+	const [colors] = useState<string[]>([
+		'#ED127B',
+		'#00ADEF',
+		'#40B93C',
+		'#602F93',
 	])
-	const [abilities, setAbilities] = useState<string[]>([
-		'any',
-		'repeat',
-		'branch',
-		'double',
+	const [abilities] = useState<((color: string) => JSX.Element)[]>([
+		AblilityAny,
+		AbilityRepeat,
+		AbilityBranch,
+		AbilityDouble,
 	])
-	const [abilitiesColors, setAbilitiesColors] = useState<
-		{
-			color: 'pink' | 'blue' | 'green' | 'purple'
-			ability: 'any' | 'double' | 'branch' | 'repeat'
-		}[]
+	const [assignedColors, setAssignedColors] = useState<
+		{ ability: (color: string) => JSX.Element; color: string }[]
 	>([])
 
-	useEffect(() => {
-		for (let i = 0; i < 4; i++) {
-			const randomIndex = Math.floor(Math.random() * colors.length)
-			const filtered = colors.filter(color => color !== colors[randomIndex])
-			const element = colors[randomIndex]
-			setColors(filtered)
+	const assignColorsToAbilities = () => {
+		let availableColors = [...colors]
+		availableColors.sort(() => Math.random() - 0.5)
 
-			console.log(filtered)
-		}
-	}, [])
+		const assigned = abilities.map((ability, index) => ({
+			ability: ability,
+			color: availableColors[index],
+		}))
+
+		setAssignedColors(assigned)
+	}
+
+	useEffect(() => {
+		assignColorsToAbilities()
+	}, [colors, abilities])
 
 	const onCardAreaClick = () => {
 		const cards = cardsContainerRef.current?.children
@@ -62,13 +68,53 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		if (redCardsCounter === 5) {
-			alert('Game Over!')
-		}
+		redCardsCounter === 5 && setIsModalActive(true)
 	}, [redCardsCounter])
+
+	const refreshCards = () => {
+		if (cardsContainerRef.current && cardsArea.current) {
+			movedCards.forEach(card => {
+				cardsContainerRef.current?.appendChild(card)
+			})
+		}
+
+		setMovedCards([])
+
+		setRedCardsCounter(0)
+
+		setRefreshCardsCounter(refreshCardsCounter + 1)
+		setIsModalActive(false)
+	}
+
+	const refreshAll = () => {
+		refreshCards()
+		setRefreshCardsCounter(0)
+		assignColorsToAbilities()
+		setIsModalActive(false)
+	}
 
 	return (
 		<div className={styles.cards}>
+			<section
+				className={`${styles.cards__modal} ${isModalActive && styles.active}`}
+			>
+				<div className={styles.cards__modal_body}>
+					{refreshCardsCounter === 4 ? (
+						<button onClick={refreshAll}>Refresh All</button>
+					) : (
+						<button onClick={refreshCards}>Refresh Cards</button>
+					)}
+				</div>
+			</section>
+
+			<section className={styles.card__abilities}>
+				{assignedColors.map(({ ability, color }, index) => (
+					<div key={index} className={styles.card__ability}>
+						<input type='checkbox' id={color} name={color} />
+						<label htmlFor={color}>{ability(color)}</label>
+					</div>
+				))}
+			</section>
 			<section className={styles.cards__container} ref={cardsContainerRef}>
 				<Cards.Red.Rectangle />
 				<Cards.Default.Circle />

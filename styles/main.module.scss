@@ -1,6 +1,84 @@
 .cards {
     display: flex;
     align-items: center;
+    position: relative;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+.cards__modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 4;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(#494949, 0.8);
+    opacity: 0;
+
+    pointer-events: none;
+    transition: all 0.3s ease;
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+
+.cards__modal_body {
+    width: 500px;
+    height: 300px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+
+    background-color: #fff;
+    button {
+        padding: 12px 20px;
+        background-color: #602f93;
+        border-radius: 6px;
+        font-size: 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        &:hover {
+            background-color: #3b1d5c;
+        }
+    }
+}
+
+.card__abilities {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    transition: all 0.3s ease;
+}
+.card__ability {
+    input {
+        display: none;
+        &:checked + label {
+            opacity: 0.2;
+        }
+    }
+    label {
+        display: flex;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        svg {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    }
 }
 
 .cards__container {
@@ -27,6 +105,7 @@
 
     grid-column: 1;
     grid-row: 1;
+    margin: auto;
     &::before {
         content: "";
 
@@ -49,7 +128,8 @@
 
 .cards__selected {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(335px, 1fr));
+    width: 100%;
     gap: 6px;
     .card__wrapper {
         grid-column: auto;
@@ -60,8 +140,11 @@
 .cards__area {
     width: 400px;
     height: 240px;
+    margin: auto;
+
     border: 2px dashed grey;
     border-radius: 18px;
+
     cursor: pointer;
     transition: all 0.3s ease;
     &:hover {
