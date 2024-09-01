@@ -99,7 +99,7 @@ export default function Home() {
 				className={`${styles.cards__modal} ${isModalActive && styles.active}`}
 			>
 				<div className={styles.cards__modal_body}>
-					{refreshCardsCounter === 4 ? (
+					{refreshCardsCounter === 3 ? (
 						<button onClick={refreshAll}>Refresh All</button>
 					) : (
 						<button onClick={refreshCards}>Refresh Cards</button>
