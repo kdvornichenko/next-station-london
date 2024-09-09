@@ -84,6 +84,13 @@ export default function Home() {
 
 		setRefreshCardsCounter(refreshCardsCounter + 1)
 		setIsModalActive(false)
+		assignedColors.forEach(ability => {
+			const abilityCard: HTMLInputElement | null = document.querySelector(
+				`input[id="${ability.color}"]`
+			)
+
+			abilityCard && (abilityCard.checked = false)
+		})
 	}
 
 	const refreshAll = () => {
