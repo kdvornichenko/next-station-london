@@ -9,6 +9,8 @@ import {
 	AbilityRepeat,
 	AblilityAny,
 } from '@/components/abilities'
+import { MapIcon } from '@/components/icons'
+import Map from '@/components/Map/Map'
 
 export default function Home() {
 	const [movedCards, setMovedCards] = useState<Element[]>([])
@@ -24,12 +26,14 @@ export default function Home() {
 		'#40B93C',
 		'#602F93',
 	])
+
 	const [abilities] = useState<((color: string) => JSX.Element)[]>([
 		AblilityAny,
 		AbilityRepeat,
 		AbilityBranch,
 		AbilityDouble,
 	])
+
 	const [assignedColors, setAssignedColors] = useState<
 		{ ability: (color: string) => JSX.Element; color: string }[]
 	>([])
@@ -122,6 +126,13 @@ export default function Home() {
 					</div>
 				))}
 			</section>
+
+			<button className={styles.cards__mapBtn} type='button'>
+				<MapIcon />
+			</button>
+
+			<Map />
+
 			<section className={styles.cards__container} ref={cardsContainerRef}>
 				<Cards.Red.Rectangle />
 				<Cards.Default.Circle />
@@ -135,6 +146,7 @@ export default function Home() {
 				<Cards.Red.Triangle />
 				<Cards.Default.Any />
 			</section>
+
 			<div className={styles.cards__selected}>
 				<div
 					className={styles.cards__area}
