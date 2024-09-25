@@ -67,4 +67,16 @@ const TopLeft = () => {
 	)
 }
 
-export default {Block, TopLeft}
+const TopCenter = () => {
+	return (
+		<Block size='lg' x='center' y='top'>
+			<Station type='triangle' x={212} y={0} />
+			<Station type='circle' x={265} y={0} fill='pink' />
+			<Station type='rectangle' x={159} y={54} />
+			<Station type='triangle' x={159} y={107} fill='green' />
+			<Station type='rectangle' x={318} y={107} isSpecial={true} />
+		</Block>
+	)
+}
+
+export default { Block, TopLeft, TopCenter }
