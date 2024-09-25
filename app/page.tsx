@@ -9,7 +9,7 @@ import {
 	AbilityRepeat,
 	AblilityAny,
 } from '@/components/abilities'
-import { MapIcon } from '@/components/icons'
+// import { MapIcon } from '@/components/icons'
 import Map from '@/components/Map/Map'
 
 export default function Home() {
@@ -127,9 +127,9 @@ export default function Home() {
 				))}
 			</section>
 
-			<button className={styles.cards__mapBtn} type='button'>
+			{/* <button className={styles.cards__mapBtn} type='button'>
 				<MapIcon />
-			</button>
+			</button> */}
 
 			<Map />
 

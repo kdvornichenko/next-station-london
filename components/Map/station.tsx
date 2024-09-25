@@ -1,112 +1,69 @@
-type Props = {
+import { FC } from 'react'
+import { TColorNames } from '@/store/colors.store'
+import { SVGCircle, SVGLine, SVGRectangle } from './Shape'
+
+type TStation = {
 	type: 'hexagon' | 'circle' | 'rectangle' | 'triangle'
 	x: number
 	y: number
+	fill?: TColorNames
 }
 
-const Hexagon = () => {
+interface ShapeProps {
+	isFill: boolean
+}
+
+const Hexagon: FC<ShapeProps> = ({ isFill }) => {
 	return (
 		<>
-			<line
-				x1='26.5987'
-				y1='132'
-				x2='18.1986'
-				y2='138.102'
-				stroke='#24265D'
-				strokeWidth='2'
-			/>
-			<line
-				x1='18.1986'
-				y1='138.102'
-				x2='21.4069'
-				y2='147.976'
-				stroke='#24265D'
-				strokeWidth='2'
-			/>
-			<line
-				x1='21.4069'
-				y1='147.976'
-				x2='31.7905'
-				y2='147.976'
-				stroke='#24265D'
-				strokeWidth='2'
-			/>
-			<line
-				x1='31.7905'
-				y1='147.976'
-				x2='34.9988'
-				y2='138.102'
-				stroke='#24265D'
-				strokeWidth='2'
-			/>
-			<line
-				x1='34.9988'
-				y1='138.102'
-				x2='26.5987'
-				y2='132'
-				stroke='#24265D'
-				strokeWidth='2'
-			/>
+			<SVGLine x1={27.5} y1={132} x2={19} y2={138} isFill={isFill} />
+			<SVGLine x1={19} y1={138} x2={22} y2={148} isFill={isFill} />
+			<SVGLine x1={22} y1={148} x2={33} y2={148} isFill={isFill} />
+			<SVGLine x1={33} y1={148} x2={36} y2={138} isFill={isFill} />
+			<SVGLine x1={36} y1={138} x2={27.5} y2={132} isFill={isFill} />
 		</>
 	)
 }
 
-const Triangle = () => {
+const Triangle: FC<ShapeProps> = ({ isFill }) => {
 	return (
 		<>
-			<line
-				x1='27'
-				y1='132'
-				x2='18'
-				y2='146'
-				stroke='#24265D'
-				stroke-width='2'
-				stroke-linecap='round'
-			/>
-			<line
-				x1='18'
-				y1='146'
-				x2='35'
-				y2='146'
-				stroke='#24265D'
-				stroke-width='2'
-				stroke-linecap='round'
-			/>
-			<line
-				x1='35'
-				y1='146'
-				x2='27'
-				y2='132'
-				stroke='#24265D'
-				stroke-width='2'
-				stroke-linecap='round'
-			/>
+			<SVGLine x1={27.5} y1={132} x2={18.5} y2={146} isFill={isFill} />
+			<SVGLine x1={18.5} y1={146} x2={35.5} y2={146} isFill={isFill} />
+			<SVGLine x1={35.5} y1={146} x2={27.5} y2={132} isFill={isFill} />
 		</>
 	)
 }
 
-const stations: Record<Props['type'], React.FC> = {
+const Circle: FC<ShapeProps> = ({ isFill }) => (
+	<SVGCircle cx={27.5} cy={140.5} r={9} isFill={isFill} />
+)
+
+const Rectangle: FC<ShapeProps> = ({ isFill }) => (
+	<SVGRectangle
+		x={20}
+		y={133}
+		width={15}
+		height={15}
+		isFill={isFill}
+		type='station'
+	/>
+)
+
+const stations: Record<TStation['type'], FC<any>> = {
 	hexagon: Hexagon,
-	circle: () => <div>Circle placeholder</div>,
-	rectangle: () => <div>Rectangle placeholder</div>,
+	circle: Circle,
+	rectangle: Rectangle,
 	triangle: Triangle,
 }
 
-const Station = ({ x, y, type }: Props) => {
+const Station: FC<TStation> = ({ x, y, type, fill }) => {
 	const Component = stations[type]
 
 	return (
 		<g transform={`translate(${x}, ${y})`}>
-			<circle
-				cx='26.5987'
-				cy='140.832'
-				r='15.4253'
-				strokeWidth={2}
-				stroke='#24265D'
-				fill='#ffffff'
-			/>
-
-			<Component />
+			<SVGCircle cx={27.5} cy={140.5} r={16} fill={fill} />
+			<Component isFill={Boolean(fill)} />
 		</g>
 	)
 }
