@@ -1,6 +1,25 @@
 .map
+    *[data-shape="hexagon"],
+    *[data-shape="triangle"],
+    *[data-shape="rectangle"],
+    *[data-shape="circle"]
+        opacity: 0
+        &.is-shown
+            opacity: 1
 
 .map__nameInput
     input
         height: 100%
         font-size: 34px
+
+.map__inputs
+    position: fixed
+    top: 20%
+    left: 30%
+    display: flex
+    flex-direction: column
+    button
+        border: 1px solid black
+        border-radius: 6px
+        background-color: cyan
+        color: black

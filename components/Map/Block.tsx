@@ -74,9 +74,68 @@ const TopCenter = () => {
 			<Station type='circle' x={265} y={0} fill='pink' />
 			<Station type='rectangle' x={159} y={54} />
 			<Station type='triangle' x={159} y={107} fill='green' />
-			<Station type='rectangle' x={318} y={107} isSpecial={true} />
+			<Station type='hexagon' x={318} y={54} isSpecial={true} />
+			<Station type='rectangle' x={318} y={107} />
 		</Block>
 	)
 }
 
-export default { Block, TopLeft, TopCenter }
+const TopRight = () => {
+	return (
+		<Block size='lg' x='right' y='top'>
+			<Block size='sm' x='right' y='top'>
+				<Station type='circle' x={479} y={0} />
+			</Block>
+			<Station type='triangle' x={372} y={0} />
+			<Station type='rectangle' x={424} y={54} />
+			<Station type='hexagon' x={478} y={54} />
+			<Station type='triangle' x={478} y={107} />
+		</Block>
+	)
+}
+
+const CenterLeft = () => {
+	return (
+		<Block size='lg' x='left' y='center'>
+			<Station type='triangle' x={52} y={213} />
+			<Station type='hexagon' x={106} y={160} />
+			<Station type='rectangle' x={106} y={213} />
+			<Station type='rectangle' x={0} y={160} isSpecial={true} />
+			<Station type='hexagon' x={0} y={267} />
+			<Station type='rectangle' x={106} y={267} fill={'purple'} />
+		</Block>
+	)
+}
+
+const CenterCenter = () => {
+	return (
+		<Block size='lg' x='center' y='center'>
+			<Station type='triangle' x={213} y={160} />
+			<Station type='triangle' x={265} y={160} isSpecial={true} isAny={true} />
+			<Station type='hexagon' x={213} y={213} />
+			<Station type='rectangle' x={265} y={213} />
+			<Station type='circle' x={318} y={160} />
+			<Station type='triangle' x={213} y={319} />
+			<Station type='circle' x={213} y={266} />
+			<Station type='rectangle' x={318} y={319} />
+			<Station type='hexagon' x={159} y={319} />
+		</Block>
+	)
+}
+const CenterRight = () => {
+	return (
+		<Block size='lg' x='right' y='center'>
+			<></>
+		</Block>
+	)
+}
+
+export default {
+	Block,
+	TopLeft,
+	TopCenter,
+	TopRight,
+	CenterLeft,
+	CenterCenter,
+	CenterRight,
+}

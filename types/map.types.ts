@@ -1,5 +1,6 @@
 import { ReactNode } from "react"
 
+export type TStations = 'hexagon' | 'circle' | 'rectangle' | 'triangle'
 
 export type TSvgLine = {
     x1: number
@@ -7,6 +8,7 @@ export type TSvgLine = {
     x2: number
     y2: number
     isFill?: boolean
+    shape?: TStations
 }
 
 export type TSvgCircle = {
@@ -16,6 +18,7 @@ export type TSvgCircle = {
     strokeColor?: string
     fill?: string
     isFill?: boolean
+    shape?: TStations
 }
 
 type TSvgRectangleSizes = 'sm' | 'lg'
@@ -28,6 +31,7 @@ export type TSvgRectangle = {
     type: 'station' | 'block'
     size?: TSvgRectangleSizes
     isFill?: boolean
+    shape?: TStations
 }
 
 type TBlockPositionsY = 'top' | 'center' | 'bottom'
