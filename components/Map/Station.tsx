@@ -162,7 +162,7 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 
 	return (
 		<g
-			onClick={() => onStationClick({ x, y, type })}
+			onClick={e => onStationClick({ x, y, type })}
 			transform={`translate(${x}, ${y})`}
 			className={styles.map__station}
 		>
@@ -174,7 +174,13 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 						points={getPolygonPoints(angle)}
 					/>
 				))}
-			<SVGCircle cx={props.x} cy={props.y} r={props.r} fill={fill} />
+			<SVGCircle
+				cx={props.x}
+				cy={props.y}
+				r={props.r}
+				fill={fill}
+				isMain={true}
+			/>
 			{isAny ? (
 				Object.keys(stations).map(stationType => {
 					const StationComponent = stations[stationType as TStation['type']]

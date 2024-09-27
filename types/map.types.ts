@@ -32,6 +32,7 @@ export type TSvgCircle = {
     fill?: string
     isFill?: boolean
     shape?: TStationType
+    isMain?: boolean
 }
 
 type TSvgRectangleSizes = 'sm' | 'lg'

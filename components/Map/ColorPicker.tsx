@@ -10,6 +10,12 @@ const ColorPicker = () => {
 	return (
 		<div className={styles.map__colors}>
 			{Object.values(colors).map(color => {
+				if (
+					color === colors.default ||
+					color === colors.white ||
+					color === colors.yellow
+				)
+					return
 				return (
 					<>
 						<input
@@ -18,7 +24,7 @@ const ColorPicker = () => {
 							name='color'
 							id={color + 'radio'}
 							onChange={() => onColorChange(color)}
-							defaultChecked={color === '#ED127B'}
+							defaultChecked={color === colors.pink}
 						/>
 						<label
 							key={color + 'radio'}

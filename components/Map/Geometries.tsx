@@ -37,6 +37,7 @@ export const SVGCircle: FC<TSvgCircle> = ({
 	fill,
 	isFill,
 	shape,
+	isMain,
 }) => {
 	const color = (fill && colors[fill as keyof typeof colors]) || fill
 
@@ -49,6 +50,7 @@ export const SVGCircle: FC<TSvgCircle> = ({
 			stroke={isFill ? colors.white : color ? color : colors.default}
 			fill={color || colors.white}
 			data-shape={shape}
+			data-main={isMain}
 		/>
 	)
 }
