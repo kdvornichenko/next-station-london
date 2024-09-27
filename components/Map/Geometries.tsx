@@ -2,22 +2,42 @@ import { FC } from 'react'
 import { TSvgCircle, TSvgLine, TSvgRectangle } from '@/types/map.types'
 import { colors } from '@/store/colors.store'
 
-export const SVGLine: FC<TSvgLine> = ({ x1, y1, x2, y2, isFill, shape }) => {
+export const SVGLine: FC<TSvgLine> = ({
+	x1,
+	y1,
+	x2,
+	y2,
+	isFill,
+	shape,
+	strokeColor,
+	strokeWidth,
+	className,
+}) => {
 	return (
 		<line
 			x1={x1}
 			y1={y1}
 			x2={x2}
 			y2={y2}
-			stroke={isFill ? colors.white : colors.default}
-			strokeWidth='2'
+			stroke={
+				strokeColor ? strokeColor : isFill ? colors.white : colors.default
+			}
+			strokeWidth={strokeWidth || 2}
 			strokeLinecap='round'
 			data-shape={shape}
+			className={className}
 		/>
 	)
 }
 
-export const SVGCircle: FC<TSvgCircle> = ({ cx, cy, r, fill, isFill,shape }) => {
+export const SVGCircle: FC<TSvgCircle> = ({
+	cx,
+	cy,
+	r,
+	fill,
+	isFill,
+	shape,
+}) => {
 	const color = (fill && colors[fill as keyof typeof colors]) || fill
 
 	return (
@@ -27,7 +47,7 @@ export const SVGCircle: FC<TSvgCircle> = ({ cx, cy, r, fill, isFill,shape }) => 
 			r={r}
 			strokeWidth={2}
 			stroke={isFill ? colors.white : color ? color : colors.default}
-			fill={color || 'transparent'}
+			fill={color || colors.white}
 			data-shape={shape}
 		/>
 	)
@@ -40,7 +60,7 @@ export const SVGRectangle: FC<TSvgRectangle> = ({
 	height,
 	type = 'station',
 	isFill,
-	shape
+	shape,
 }) => {
 	return (
 		<rect

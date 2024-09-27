@@ -1,4 +1,6 @@
 .map
+    svg
+        scale: 1
     *[data-shape="hexagon"],
     *[data-shape="triangle"],
     *[data-shape="rectangle"],
@@ -6,6 +8,30 @@
         opacity: 0
         &.is-shown
             opacity: 1
+
+.map__connection
+    pointer-events: none
+
+.map__station
+    cursor: pointer
+
+.map__colors
+    display: flex
+
+.map__color
+    border-radius: 100px
+    width: 20px
+    height: 20px
+    cursor: pointer
+    border: 1px solid transparent
+    transition: all 0.3s ease
+
+.map__colorinput
+    display: none
+    &:checked + .map__color
+        border-color: #fff
+    &:not(:checked) + .map__color
+        opacity: 0.5
 
 .map__nameInput
     input
@@ -16,8 +42,9 @@
     position: fixed
     top: 20%
     left: 30%
-    display: flex
+    display: none
     flex-direction: column
+    z-index: 2
     button
         border: 1px solid black
         border-radius: 6px

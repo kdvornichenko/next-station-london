@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { TBlock } from '@/types/map.types'
-import { SVGRectangle } from './Shape'
+import { SVGRectangle } from './Geometries'
 import Station from './Station'
 
 const Block = ({ children, size, x, y }: TBlock) => {
@@ -71,7 +71,7 @@ const TopCenter = () => {
 	return (
 		<Block size='lg' x='center' y='top'>
 			<Station type='triangle' x={212} y={0} />
-			<Station type='circle' x={265} y={0} fill='pink' />
+			<Station type='circle' x={265} y={0} />
 			<Station type='rectangle' x={159} y={54} />
 			<Station type='triangle' x={159} y={107} fill='green' />
 			<Station type='hexagon' x={318} y={54} isSpecial={true} />
@@ -122,10 +122,56 @@ const CenterCenter = () => {
 		</Block>
 	)
 }
+
 const CenterRight = () => {
 	return (
 		<Block size='lg' x='right' y='center'>
-			<></>
+			<Station type='circle' x={372} y={160} fill={'pink'} />
+			<Station type='rectangle' x={478} y={160} />
+			<Station type='hexagon' x={425} y={213} />
+			<Station type='circle' x={372} y={267} />
+			<Station type='triangle' x={372} y={320} />
+			<Station type='triangle' x={478} y={320} isSpecial={true} />
+		</Block>
+	)
+}
+
+const BottomLeft = () => {
+	return (
+		<Block size='lg' x='left' y='bottom'>
+			<Block size='sm' x='left' y='bottom'>
+				<Station type='triangle' x={0} y={479} />
+			</Block>
+			<Station type='circle' x={0} y={373} />
+			<Station type='circle' x={52} y={426} />
+			<Station type='rectangle' x={106} y={373} />
+			<Station type='rectangle' x={52} y={479} />
+		</Block>
+	)
+}
+
+const BottomCenter = () => {
+	return (
+		<Block size='lg' x='center' y='bottom'>
+			<Station type='circle' x={158} y={373} />
+			<Station type='hexagon' x={158} y={479} />
+			<Station type='circle' x={212} y={479} isSpecial={true} />
+			<Station type='triangle' x={265} y={479} />
+			<Station type='hexagon' x={318} y={426} />
+			<Station type='hexagon' x={265} y={373} fill={'blue'} />
+		</Block>
+	)
+}
+const BottomRight = () => {
+	return (
+		<Block size='lg' x='right' y='bottom'>
+			<Block size='sm' x='right' y='bottom'>
+				<Station type='rectangle' x={479} y={479} />
+				<Station type='circle' x={372} y={479} />
+				<Station type='circle' x={372} y={479} />
+				<Station type='circle' x={425} y={373} />
+				<Station type='hexagon' x={479} y={373} />
+			</Block>
 		</Block>
 	)
 }
@@ -138,4 +184,7 @@ export default {
 	CenterLeft,
 	CenterCenter,
 	CenterRight,
+	BottomLeft,
+	BottomCenter,
+	BottomRight,
 }

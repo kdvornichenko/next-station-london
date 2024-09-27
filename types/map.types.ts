@@ -1,6 +1,16 @@
+import { TColorNames } from "@/store/colors.store"
 import { ReactNode } from "react"
 
-export type TStations = 'hexagon' | 'circle' | 'rectangle' | 'triangle'
+export type TStationType = 'hexagon' | 'circle' | 'rectangle' | 'triangle'
+
+export type TStation = {
+    type: TStationType
+    x: number
+    y: number
+    fill?: TColorNames
+    isSpecial?: boolean
+    isAny?: boolean
+}
 
 export type TSvgLine = {
     x1: number
@@ -8,7 +18,10 @@ export type TSvgLine = {
     x2: number
     y2: number
     isFill?: boolean
-    shape?: TStations
+    shape?: TStationType
+    strokeColor?: string
+    strokeWidth?: number
+    className?: string
 }
 
 export type TSvgCircle = {
@@ -18,7 +31,7 @@ export type TSvgCircle = {
     strokeColor?: string
     fill?: string
     isFill?: boolean
-    shape?: TStations
+    shape?: TStationType
 }
 
 type TSvgRectangleSizes = 'sm' | 'lg'
@@ -31,7 +44,7 @@ export type TSvgRectangle = {
     type: 'station' | 'block'
     size?: TSvgRectangleSizes
     isFill?: boolean
-    shape?: TStations
+    shape?: TStationType
 }
 
 type TBlockPositionsY = 'top' | 'center' | 'bottom'

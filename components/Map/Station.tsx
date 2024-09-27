@@ -1,126 +1,21 @@
 import { FC, useEffect, useState } from 'react'
-import { colors, TColorNames } from '@/store/colors.store'
-import { SVGCircle, SVGLine, SVGRectangle } from './Shape'
-import { TStations } from '@/types/map.types'
-import gsap from 'gsap'
-
-type TStation = {
-	type: TStations
-	x: number
-	y: number
-	fill?: TColorNames
-	isSpecial?: boolean
-	isAny?: boolean
-}
-
-interface ShapeProps {
-	isFill: boolean
-	shape?: TStations
-}
-
-const Hexagon: FC<ShapeProps> = ({ isFill, shape }) => {
-	return (
-		<>
-			<SVGLine
-				x1={27.5}
-				y1={132}
-				x2={19}
-				y2={138}
-				isFill={isFill}
-				shape={shape}
-			/>
-			<SVGLine
-				x1={19}
-				y1={138}
-				x2={22}
-				y2={148}
-				isFill={isFill}
-				shape={shape}
-			/>
-			<SVGLine
-				x1={22}
-				y1={148}
-				x2={33}
-				y2={148}
-				isFill={isFill}
-				shape={shape}
-			/>
-			<SVGLine
-				x1={33}
-				y1={148}
-				x2={36}
-				y2={138}
-				isFill={isFill}
-				shape={shape}
-			/>
-			<SVGLine
-				x1={36}
-				y1={138}
-				x2={27.5}
-				y2={132}
-				isFill={isFill}
-				shape={shape}
-			/>
-		</>
-	)
-}
-
-const Triangle: FC<ShapeProps> = ({ isFill, shape }) => {
-	return (
-		<>
-			<SVGLine
-				x1={27.5}
-				y1={132}
-				x2={18.5}
-				y2={146}
-				isFill={isFill}
-				shape={shape}
-			/>
-			<SVGLine
-				x1={18.5}
-				y1={146}
-				x2={35.5}
-				y2={146}
-				isFill={isFill}
-				shape={shape}
-			/>
-			<SVGLine
-				x1={35.5}
-				y1={146}
-				x2={27.5}
-				y2={132}
-				isFill={isFill}
-				shape={shape}
-			/>
-		</>
-	)
-}
-
-const Circle: FC<ShapeProps> = ({ isFill, shape }) => (
-	<SVGCircle cx={27.5} cy={140.5} r={9} isFill={isFill} shape={shape} />
-)
-
-const Rectangle: FC<ShapeProps> = ({ isFill, shape }) => (
-	<SVGRectangle
-		x={20}
-		y={133}
-		width={15}
-		height={15}
-		isFill={isFill}
-		type='station'
-		shape={shape}
-	/>
-)
+import { colors } from '@/store/colors.store'
+import { SVGCircle } from './Geometries'
+import { TStation } from '@/types/map.types'
+import Shapes from './Shapes'
+import { useSetStations } from '@/store/stations.store'
+import styles from './map.module.sass'
 
 const stations: Record<TStation['type'], FC<any>> = {
-	hexagon: Hexagon,
-	circle: Circle,
-	rectangle: Rectangle,
-	triangle: Triangle,
+	hexagon: Shapes.Hexagon,
+	circle: Shapes.Circle,
+	rectangle: Shapes.Rectangle,
+	triangle: Shapes.Triangle,
 }
 
 const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 	const Component = stations[type]
+	const { stationFirst, setStationFirst, setStationSecond } = useSetStations()
 
 	const [selectedElement, setSelectedElement] = useState<SVGGElement | null>(
 		null
@@ -178,7 +73,7 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 	}
 
 	useEffect(() => {
-		if (!selectedElement) return
+		if (selectedElement === null) return
 
 		// Находим инпуты с id="x" и id="y"
 		const inputX = document.getElementById('x') as HTMLInputElement
@@ -247,13 +142,30 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 		cycleShapes()
 	}, [])
 
-	const onStationClick = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
-		const targetElement = e.currentTarget
-		setSelectedElement(targetElement)
+	// const onStationClick = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
+	// 	const targetElement = e.currentTarget
+	// 	Promise.resolve(setSelectedElement(null)).then(() =>
+	// 		setSelectedElement(targetElement)
+	// 	)
+	// }
+
+	const onStationClick = ({ x, y, type }: TStation) => {
+		const newX = x + 27.5
+		const newY = y + 140.5
+
+		if (!stationFirst) {
+			setStationFirst({ x: newX, y: newY, type })
+		} else {
+			setStationSecond({ x: newX, y: newY, type })
+		}
 	}
 
 	return (
-		<g onClick={e => onStationClick(e)} transform={`translate(${x}, ${y})`}>
+		<g
+			onClick={() => onStationClick({ x, y, type })}
+			transform={`translate(${x}, ${y})`}
+			className={styles.map__station}
+		>
 			{isSpecial &&
 				getAngles(8).map(angle => (
 					<polygon
@@ -265,7 +177,7 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 			<SVGCircle cx={props.x} cy={props.y} r={props.r} fill={fill} />
 			{isAny ? (
 				Object.keys(stations).map(stationType => {
-					const StationComponent = stations[stationType as TStation['type']] // Получаем компонент по типу станции
+					const StationComponent = stations[stationType as TStation['type']]
 					return (
 						<StationComponent
 							key={stationType}
