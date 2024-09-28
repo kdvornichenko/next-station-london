@@ -126,6 +126,7 @@ const Map = () => {
 			>
 				{/* Блоки карты */}
 				<UseSvg id='map-lines' />
+				
 				<Block.TopLeft />
 				<Block.TopCenter />
 				<Block.TopRight />
