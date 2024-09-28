@@ -12,6 +12,8 @@ export const SVGLine: FC<TSvgLine> = ({
 	strokeColor,
 	strokeWidth,
 	className,
+	onClick,
+	style
 }) => {
 	return (
 		<line
@@ -26,6 +28,8 @@ export const SVGLine: FC<TSvgLine> = ({
 			strokeLinecap='round'
 			data-shape={shape}
 			className={className}
+			onClick={() => (onClick ? onClick() : null)}
+			style={style}
 		/>
 	)
 }
@@ -38,8 +42,17 @@ export const SVGCircle: FC<TSvgCircle> = ({
 	isFill,
 	shape,
 	isMain,
+	className,
+	strokeColor,
+	strokeDasharray,
 }) => {
 	const color = (fill && colors[fill as keyof typeof colors]) || fill
+	const stroke = () => {
+		if (strokeColor) return strokeColor
+		else if (isFill) return colors.white
+		else if (color) return color
+		else return colors.default
+	}
 
 	return (
 		<circle
@@ -47,10 +60,12 @@ export const SVGCircle: FC<TSvgCircle> = ({
 			cy={cy}
 			r={r}
 			strokeWidth={2}
-			stroke={isFill ? colors.white : color ? color : colors.default}
+			stroke={stroke()}
 			fill={color || colors.white}
 			data-shape={shape}
 			data-main={isMain}
+			className={className}
+			strokeDasharray={strokeDasharray}
 		/>
 	)
 }

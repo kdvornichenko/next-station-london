@@ -16,7 +16,6 @@ const stations: Record<TStation['type'], FC<any>> = {
 const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 	const Component = stations[type]
 	const { stationFirst, setStationFirst, setStationSecond } = useSetStations()
-
 	const [selectedElement, setSelectedElement] = useState<SVGGElement | null>(
 		null
 	)
@@ -149,14 +148,19 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 	// 	)
 	// }
 
-	const onStationClick = ({ x, y, type }: TStation) => {
-		const newX = x + 27.5
-		const newY = y + 140.5
+	const onStationClick = (station: TStation) => {
+		const newX = station.x + 27.5
+		const newY = station.y + 140.5
 
 		if (!stationFirst) {
 			setStationFirst({ x: newX, y: newY, type })
 		} else {
-			setStationSecond({ x: newX, y: newY, type })
+			// Проверяем, является ли текущая станция той же самой, что и stationFirst
+			if (stationFirst.x === newX && stationFirst.y === newY) {
+				setStationFirst(null)
+			} else {
+				setStationSecond({ x: newX, y: newY, type })
+			}
 		}
 	}
 

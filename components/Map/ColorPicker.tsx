@@ -17,7 +17,7 @@ const ColorPicker = () => {
 				)
 					return
 				return (
-					<>
+					<div className={styles.map__color} key={color + 'radio'}>
 						<input
 							className={styles.map__colorinput}
 							type='radio'
@@ -27,12 +27,10 @@ const ColorPicker = () => {
 							defaultChecked={color === colors.pink}
 						/>
 						<label
-							key={color + 'radio'}
 							htmlFor={color + 'radio'}
-							className={styles.map__color}
 							style={{ backgroundColor: color }}
 						/>
-					</>
+					</div>
 				)
 			})}
 		</div>

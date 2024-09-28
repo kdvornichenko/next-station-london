@@ -1,6 +1,6 @@
 import { TStation } from '@/types/map.types'
 import { create } from 'zustand'
-import {  TColorValues } from './colors.store'
+import { TColorValues } from './colors.store'
 
 interface IStations {
     stationFirst: TStation | null
@@ -11,6 +11,9 @@ interface IStations {
 
     currentColor: TColorValues | null
     setCurrentColor: (color: TColorValues | null) => void
+
+    isActive: boolean
+    setIsActive: (isActive: boolean) => void
 }
 
 export const useSetStations = create<IStations>((set) => ({
@@ -22,4 +25,7 @@ export const useSetStations = create<IStations>((set) => ({
 
     currentColor: null,
     setCurrentColor: (currentColor) => set({ currentColor }),
+
+    isActive: false,
+    setIsActive: (isActive) => set({ isActive })
 }))

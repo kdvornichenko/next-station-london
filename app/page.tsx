@@ -11,6 +11,8 @@ import {
 } from '@/components/abilities'
 // import { MapIcon } from '@/components/icons'
 import Map from '@/components/Map/Map'
+import MapLines from '@/components/Map/MapLines'
+import SvgSpite from '@/components/SvgSpite'
 
 export default function Home() {
 	const [movedCards, setMovedCards] = useState<Element[]>([])
@@ -106,6 +108,7 @@ export default function Home() {
 
 	return (
 		<div className={styles.cards}>
+			<SvgSpite />
 			<section
 				className={`${styles.cards__modal} ${isModalActive && styles.active}`}
 			>

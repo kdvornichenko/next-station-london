@@ -1,5 +1,5 @@
 import { TColorNames } from "@/store/colors.store"
-import { ReactNode } from "react"
+import { CSSProperties, ReactNode } from "react"
 
 export type TStationType = 'hexagon' | 'circle' | 'rectangle' | 'triangle'
 
@@ -22,6 +22,8 @@ export type TSvgLine = {
     strokeColor?: string
     strokeWidth?: number
     className?: string
+    onClick?: () => void
+    style?: CSSProperties
 }
 
 export type TSvgCircle = {
@@ -33,6 +35,8 @@ export type TSvgCircle = {
     isFill?: boolean
     shape?: TStationType
     isMain?: boolean
+    className?: string
+    strokeDasharray?: number
 }
 
 type TSvgRectangleSizes = 'sm' | 'lg'
