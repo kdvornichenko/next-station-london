@@ -1,5 +1,3 @@
-import styles from './map.module.sass'
-
 const MapTopBot = () => {
 	return (
 		<g>
@@ -1338,8 +1336,7 @@ const MapTopBot = () => {
 					fill='#80D6F7'
 				/>
 			</g>
-			
-		
+
 			<mask
 				id='mask30_1_6'
 				maskUnits='userSpaceOnUse'
@@ -1867,14 +1864,13 @@ const MapTopBot = () => {
 
 				<g>
 					<foreignObject
-						className={styles.map__nameInput}
 						x='176'
 						y='32'
 						width='170'
 						height='44'
 					>
 						<input
-							className='bg-white text-black w-full h-full text-center'
+							className='bg-white text-black w-full h-full text-center text-3xl'
 							type='text'
 							id='name'
 						/>

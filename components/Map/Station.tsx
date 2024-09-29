@@ -4,7 +4,6 @@ import { SVGCircle } from './Geometries'
 import { TStation } from '@/types/map.types'
 import Shapes from './Shapes'
 import { useSetStations } from '@/store/stations.store'
-import styles from './map.module.sass'
 
 const stations: Record<TStation['type'], FC<any>> = {
 	hexagon: Shapes.Hexagon,
@@ -168,7 +167,7 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 		<g
 			onClick={e => onStationClick({ x, y, type })}
 			transform={`translate(${x}, ${y})`}
-			className={styles.map__station}
+			className='cursor-pointer relative'
 		>
 			{isSpecial &&
 				getAngles(8).map(angle => (

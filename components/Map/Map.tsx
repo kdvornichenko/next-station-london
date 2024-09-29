@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import Block from './Block'
-import styles from './map.module.sass'
 import { useSetStations } from '@/store/stations.store'
 import { TSvgCircle, TSvgLine } from '@/types/map.types'
 import { colors } from '@/store/colors.store'
@@ -76,7 +75,7 @@ const Map = () => {
 				y2={line.y2}
 				strokeColor={line.strokeColor}
 				strokeWidth={4}
-				className={styles.map__connection}
+				className='cursor-pointer'
 				onClick={() => handleLineClick(index)}
 				style={{ pointerEvents: isLineRemovable ? 'all' : 'none' }}
 			/>
@@ -93,14 +92,14 @@ const Map = () => {
 				r={24}
 				fill={'transparent'}
 				strokeColor={colors.default}
-				className={styles.map__selected}
+				className='pointer-events-none animate-dash-animation'
 				strokeDasharray={4}
 			/>
 		)
 	}
 
 	return (
-		<div className={styles.map}>
+		<div className='map'>
 			<ColorPicker />
 			<div>
 				<input
@@ -110,10 +109,14 @@ const Map = () => {
 				/>
 				<label htmlFor='delete-line'>Удалить линию</label>
 			</div>
-			<div className={styles.map__inputs}>
+			<div className='fixed top-1/4 left-1/3 hidden flex-col z-10'>
 				<input type='number' placeholder='x' id='x' />
 				<input type='number' placeholder='y' id='y' />
-				<button type='button' id='button'>
+				<button
+					type='button'
+					id='button'
+					className='border border-black border-solid rounded-md bg-cyan-400 text-black'
+				>
 					Toggle
 				</button>
 			</div>
@@ -123,10 +126,11 @@ const Map = () => {
 				viewBox='0 0 532 924'
 				fill='none'
 				xmlns='http://www.w3.org/2000/svg'
+				className='w-full h-full'
 			>
-				{/* Блоки карты */}
 				<UseSvg id='map-lines' />
-				
+
+				{/* Блоки карты */}
 				<Block.TopLeft />
 				<Block.TopCenter />
 				<Block.TopRight />
@@ -144,7 +148,7 @@ const Map = () => {
 
 				{/* Верхний и нижний шаблон карты */}
 				<UseSvg id='map-top-bot' />
-				<MapScore />
+				<MapScore x={58} y={660} />
 			</svg>
 		</div>
 	)

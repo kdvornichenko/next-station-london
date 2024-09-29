@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .map {
+        *[data-shape="hexagon"],
+        *[data-shape="triangle"],
+        *[data-shape="rectangle"],
+        *[data-shape="circle"] {
+            opacity: 0;
+            &.is-shown {
+                opacity: 1;
+            }
+        }
+    }
+}
