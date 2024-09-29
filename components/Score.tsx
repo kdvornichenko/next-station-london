@@ -1,8 +1,12 @@
 import { useScoreStore } from '@/store/score.store'
 import RoundScore from './Map/RoundScore'
 
+import { SVGCircle } from './Map/Geometries'
+import SpecialPolygons from './SpecialPolygons'
+
 const Score = () => {
 	const { totalRoundsScore } = useScoreStore()
+	// const spicialPointsProps = {}
 
 	return (
 		<g>
@@ -20,7 +24,10 @@ const Score = () => {
 			{/* END СЧЕТ ВСЕХ РАУНДОВ */}
 
 			{/* СЧЕТ СПЕЦИАЛЬНЫХ СТАНЦИЙ} */}
-                
+			<g transform='translate(30, 0)'>
+				<SpecialPolygons x={0} y={898} r={14} />
+				<SVGCircle cx={0} cy={898} r={14} />
+			</g>
 			{/* END СЧЕТ СПЕЦИАЛЬНЫХ СТАНЦИЙ} */}
 		</g>
 	)
