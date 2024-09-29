@@ -1,3 +1,5 @@
+import { create } from 'zustand'
+
 export const colors = {
     pink: '#ED127B',
     blue: '#00ADEF',
@@ -13,3 +15,16 @@ export type TColorNames = keyof typeof colors;
 
 // Типы значений colors (хэш-коды)
 export type TColorValues = (typeof colors)[TColorNames];
+
+interface IColor {
+    currentColor: TColorValues | null
+    setCurrentColor: (color: TColorValues | null) => void
+}
+
+export const useColorStore = create<IColor>((set) => ({
+    currentColor: null,
+    setCurrentColor: (currentColor) => set({ currentColor }),
+}))
+
+
+

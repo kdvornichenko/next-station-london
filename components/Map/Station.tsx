@@ -3,7 +3,7 @@ import { colors } from '@/store/colors.store'
 import { SVGCircle } from './Geometries'
 import { TStation } from '@/types/map.types'
 import Shapes from './Shapes'
-import { useSetStations } from '@/store/stations.store'
+import { useStationsStore } from '@/store/stations.store'
 
 const stations: Record<TStation['type'], FC<any>> = {
 	hexagon: Shapes.Hexagon,
@@ -14,7 +14,7 @@ const stations: Record<TStation['type'], FC<any>> = {
 
 const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 	const Component = stations[type]
-	const { stationFirst, setStationFirst, setStationSecond } = useSetStations()
+	const { stationFirst, setStationFirst, setStationSecond } = useStationsStore()
 	const [selectedElement, setSelectedElement] = useState<SVGGElement | null>(
 		null
 	)
@@ -165,7 +165,7 @@ const Station: FC<TStation> = ({ x, y, type, fill, isSpecial, isAny }) => {
 
 	return (
 		<g
-			onClick={e => onStationClick({ x, y, type })}
+			onClick={() => onStationClick({ x, y, type })}
 			transform={`translate(${x}, ${y})`}
 			className='cursor-pointer relative'
 		>

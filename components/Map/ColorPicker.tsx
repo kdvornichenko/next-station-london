@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { colors, TColorValues } from '@/store/colors.store'
-import { useSetStations } from '@/store/stations.store'
+import { colors, TColorValues, useColorStore } from '@/store/colors.store'
 
 const ColorPicker = () => {
-	const { setCurrentColor } = useSetStations()
+	const { setCurrentColor } = useColorStore()
 	const [selectedColor, setSelectedColor] = useState<TColorValues>(colors.pink)
 
 	const onColorChange = (color: TColorValues) => {

@@ -1,22 +1,18 @@
 import { useEffect, useState } from 'react'
 import Block from './Block'
-import { useSetStations } from '@/store/stations.store'
+import { useStationsStore } from '@/store/stations.store'
 import { TSvgCircle, TSvgLine } from '@/types/map.types'
-import { colors } from '@/store/colors.store'
+import { colors, useColorStore } from '@/store/colors.store'
 import { SVGCircle, SVGLine } from './Geometries'
 import ColorPicker from './ColorPicker'
-import MapScore from './MapScore'
 import UseSvg from '../UseSvg'
+import Score from '../Score'
 
 const Map = () => {
-	const {
-		stationFirst,
-		setStationFirst,
-		stationSecond,
-		setStationSecond,
-		currentColor,
-		setIsActive,
-	} = useSetStations()
+	const { stationFirst, setStationFirst, stationSecond, setStationSecond } =
+		useStationsStore()
+
+	const { currentColor } = useColorStore()
 
 	const [lines, setLines] = useState<TSvgLine[]>([])
 	const [selectedCircle, setSelectedCircle] = useState<TSvgCircle | null>()
@@ -54,7 +50,6 @@ const Map = () => {
 		}
 	}, [stationFirst])
 
-	// Обработчик клика на линию
 	const handleLineClick = (index: number) => {
 		if (!isLineRemovable) return
 
@@ -148,7 +143,7 @@ const Map = () => {
 
 				{/* Верхний и нижний шаблон карты */}
 				<UseSvg id='map-top-bot' />
-				<MapScore x={58} y={660} />
+				<Score />
 			</svg>
 		</div>
 	)

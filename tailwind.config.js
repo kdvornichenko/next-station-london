@@ -25,5 +25,22 @@ module.exports = {
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [
+    nextui(),
+    function ({ addComponents }) {
+      addComponents({
+        '.score-field': {
+          width: '100%',
+          height: '100%',
+          textAlign: 'center',
+          color: 'black',
+          fontSize: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'white',
+        },
+      })
+    }
+  ],
 }
