@@ -39,10 +39,10 @@ const SpecialPoint = ({ index, textValue }: TSpecialPoint) => {
 		>
 			{index !== 10 && <SpecialPolygons x={x} y={y} r={r} />}
 			<SVGCircle cx={x} cy={y} r={r} />
-			<foreignObject x={x} y={y - 10} className='overflow-auto w-4 h-4'>
-				<span className='-translate-x-1/2 -translate-y-1 text-black text-lg block w-fit select-none'>
+			<foreignObject x={x - r} y={y - r} className='w-7 h-7 '>
+				<div className='w-full h-full flex items-center justify-center text-black text-lg select-none'>
 					{textValue}
-				</span>
+				</div>
 			</foreignObject>
 			{isClicked && lineColor && (
 				<SVGLine
