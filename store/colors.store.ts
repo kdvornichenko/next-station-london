@@ -22,7 +22,7 @@ interface IColor {
 }
 
 export const useColorStore = create<IColor>((set) => ({
-    currentColor: null,
+    currentColor: colors.pink,
     setCurrentColor: (currentColor) => set({ currentColor }),
 }))
 
