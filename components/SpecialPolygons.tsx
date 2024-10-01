@@ -1,7 +1,12 @@
 import { colors } from '@/store/colors.store'
 import React from 'react'
 
-type TSpecialPolygons = { x: number; y: number; r: number; polygonsCount?: number }
+type TSpecialPolygons = {
+	x: number
+	y: number
+	r: number
+	polygonsCount?: number
+}
 
 const SpecialPolygons = (props: TSpecialPolygons) => {
 	const getPolygonPoints = (angle: number) => {
@@ -49,13 +54,18 @@ const SpecialPolygons = (props: TSpecialPolygons) => {
 		)
 	}
 
-	return getAngles(props.polygonsCount || 8).map(angle => (
-		<polygon
-			key={angle}
-			fill={colors.default}
-			points={getPolygonPoints(angle)}
-		/>
-	))
+	// Оборачиваем результат в React.Fragment
+	return (
+		<React.Fragment>
+			{getAngles(props.polygonsCount || 8).map(angle => (
+				<polygon
+					key={angle}
+					fill={colors.default}
+					points={getPolygonPoints(angle)}
+				/>
+			))}
+		</React.Fragment>
+	)
 }
 
 export default SpecialPolygons
