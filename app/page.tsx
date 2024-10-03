@@ -11,7 +11,6 @@ import {
 } from '@/components/abilities'
 // import { MapIcon } from '@/components/icons'
 import Map from '@/components/Map/Map'
-import MapLines from '@/components/Map/MapLines'
 import SvgSpite from '@/components/SvgSpite'
 
 export default function Home() {
