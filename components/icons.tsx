@@ -69,6 +69,36 @@ export const MapIcon: React.FC<IconSvgProps> = ({
 	</svg>
 )
 
+export const CheckIcon: React.FC<IconSvgProps> = ({
+	size = 27,
+	width,
+	height,
+	...props
+}) => (
+	<svg
+		width={size || width}
+		height={size || height}
+		x='0'
+		y='0'
+		viewBox='0 0 254000 254000'
+	>
+		<g>
+			<g fill='#48b02c'>
+				<path
+					d='m96229 162644 89510-89509c2637-2638 6967-2611 9578 0l8642 8642c2611 2611 2611 6968 0 9578l-89509 89510c-2611 2611-6941 2638-9579 0l-8642-8642c-2638-2638-2638-6941 0-9579z'
+					fill='#48b02c'
+					opacity='1'
+				></path>
+				<path
+					d='m68270 108089 54525 54525c2637 2638 2606 6973 0 9579l-8642 8642c-2606 2605-6973 2605-9579 0l-54525-54525c-2606-2606-2637-6941 0-9579l8642-8642c2638-2637 6941-2637 9579 0z'
+					fill='#48b02c'
+					opacity='1'
+				></path>
+			</g>
+		</g>
+	</svg>
+)
+
 export const Logo: React.FC<IconSvgProps> = ({
 	size = 36,
 	width,

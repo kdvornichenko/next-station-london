@@ -1,15 +1,16 @@
 import { useScoreStore } from '@/store/score.store'
-import { SVGCircle, SVGLine } from './Map/Geometries'
-import SpecialPolygons from './SpecialPolygons'
+
 import { colors, useColorStore } from '@/store/colors.store'
-import { useState } from 'react'
+import { FC, useState } from 'react'
+import SpecialPolygons from '../SpecialPolygons'
+import { SVGCircle, SVGLine } from '../Map/Geometries'
 
 type TSpecialPoint = {
 	index: number
 	textValue: number
 }
 
-const SpecialPoint = ({ index, textValue }: TSpecialPoint) => {
+const SpecialPoint: FC<TSpecialPoint> = ({ index, textValue }) => {
 	const { setSpecialPoint, specialPoints } = useScoreStore()
 	const { currentColor } = useColorStore()
 	const [lineColor, setLineColor] = useState<string | null>(null) // Локальное состояние для цвета линии

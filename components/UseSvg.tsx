@@ -3,10 +3,11 @@ import { FC } from 'react'
 
 type TUseSvg = {
 	id: TSpriteNames
+	className?: string
 }
 
-const UseSvg: FC<TUseSvg> = ({ id }) => {
-	return <use xlinkHref={'#' + id} />
+const UseSvg: FC<TUseSvg> = ({ id, className }) => {
+	return <use xlinkHref={'#' + id} className={className}/>
 }
 
 export default UseSvg

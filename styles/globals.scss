@@ -14,4 +14,13 @@
             }
         }
     }
+
+    .task-input {
+        & + label {
+            opacity: 0.2;
+        }
+        &:checked + label {
+            opacity: 1;
+        }
+    }
 }

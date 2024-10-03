@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { SVGCircle, SVGLine, SVGRectangle } from './Geometries'
 import { TStationType } from '@/types/map.types'
 

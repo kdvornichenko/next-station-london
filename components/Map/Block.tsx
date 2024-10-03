@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { TBlock } from '@/types/map.types'
 import { SVGRectangle } from './Geometries'
 import Station from './Station'
 
-const Block = ({ children, size, x, y }: TBlock) => {
+const Block: FC<TBlock> = ({ children, size, x, y }) => {
 	const getPosX = (x: 'left' | 'center' | 'right'): number => {
 		if (size === 'sm' && x === 'right' && (y === 'top' || y === 'bottom')) {
 			return 479

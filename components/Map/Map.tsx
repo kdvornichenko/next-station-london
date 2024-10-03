@@ -6,7 +6,7 @@ import { colors, useColorStore } from '@/store/colors.store'
 import { SVGCircle, SVGLine } from './Geometries'
 import ColorPicker from './ColorPicker'
 import UseSvg from '../UseSvg'
-import Score from '../Score'
+import Score from '../Score/Score'
 
 const Map = () => {
 	const { stationFirst, setStationFirst, stationSecond, setStationSecond } =
@@ -123,7 +123,7 @@ const Map = () => {
 				xmlns='http://www.w3.org/2000/svg'
 				className='w-full h-full'
 			>
-				<UseSvg id='map-lines' />
+				<UseSvg id='map-lines' className='pointer-events-none' />
 
 				{/* Блоки карты */}
 				<Block.TopLeft />
@@ -142,7 +142,7 @@ const Map = () => {
 				{renderLines()}
 
 				{/* Верхний и нижний шаблон карты */}
-				<UseSvg id='map-top-bot' />
+				<UseSvg id='map-top-bot' className='pointer-events-none' />
 				<Score />
 			</svg>
 		</div>
