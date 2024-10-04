@@ -8,6 +8,8 @@ export const colors = {
     default: '#24265D',
     white: '#fff',
     yellow: '#FFF200',
+    cardBlue: '#7DBAD7',
+    cardRed: '#FF1D5C'
 } as const;
 
 // Типы ключей colors (строковые названия цветов)

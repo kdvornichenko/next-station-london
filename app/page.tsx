@@ -3,15 +3,11 @@
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import Cards from '@/components/Cards'
 import styles from '@/styles/main.module.scss'
-import {
-	AbilityBranch,
-	AbilityDouble,
-	AbilityRepeat,
-	AblilityAny,
-} from '@/components/abilities'
-// import { MapIcon } from '@/components/icons'
+
 import Map from '@/components/Map/Map'
 import SvgSpite from '@/components/SvgSpite'
+import Abilities from '@/components/abilities'
+import Card from '@/components/Card'
 
 export default function Home() {
 	const [movedCards, setMovedCards] = useState<Element[]>([])
@@ -20,40 +16,6 @@ export default function Home() {
 	const [isModalActive, setIsModalActive] = useState<boolean>(false)
 	const cardsContainerRef: MutableRefObject<HTMLElement | null> = useRef(null)
 	const cardsArea = useRef<HTMLDivElement | null>(null)
-
-	const [colors] = useState<string[]>([
-		'#ED127B',
-		'#00ADEF',
-		'#40B93C',
-		'#602F93',
-	])
-
-	const [abilities] = useState<((color: string) => JSX.Element)[]>([
-		AblilityAny,
-		AbilityRepeat,
-		AbilityBranch,
-		AbilityDouble,
-	])
-
-	const [assignedColors, setAssignedColors] = useState<
-		{ ability: (color: string) => JSX.Element; color: string }[]
-	>([])
-
-	const assignColorsToAbilities = () => {
-		let availableColors = [...colors]
-		availableColors.sort(() => Math.random() - 0.5)
-
-		const assigned = abilities.map((ability, index) => ({
-			ability: ability,
-			color: availableColors[index],
-		}))
-
-		setAssignedColors(assigned)
-	}
-
-	useEffect(() => {
-		assignColorsToAbilities()
-	}, [colors, abilities])
 
 	const onCardAreaClick = () => {
 		const cards = cardsContainerRef.current?.children
@@ -89,19 +51,11 @@ export default function Home() {
 
 		setRefreshCardsCounter(refreshCardsCounter + 1)
 		setIsModalActive(false)
-		assignedColors.forEach(ability => {
-			const abilityCard: HTMLInputElement | null = document.querySelector(
-				`input[id="${ability.color}"]`
-			)
-
-			abilityCard && (abilityCard.checked = false)
-		})
 	}
 
 	const refreshAll = () => {
 		refreshCards()
 		setRefreshCardsCounter(0)
-		assignColorsToAbilities()
 		setIsModalActive(false)
 	}
 
@@ -120,33 +74,22 @@ export default function Home() {
 				</div>
 			</section>
 
-			<section className={styles.card__abilities}>
-				{assignedColors.map(({ ability, color }, index) => (
-					<div key={index} className={styles.card__ability}>
-						<input type='checkbox' id={color} name={color} />
-						<label htmlFor={color}>{ability(color)}</label>
-					</div>
-				))}
-			</section>
-
-			{/* <button className={styles.cards__mapBtn} type='button'>
-				<MapIcon />
-			</button> */}
+			<Abilities />
 
 			<Map />
 
 			<section className={styles.cards__container} ref={cardsContainerRef}>
-				<Cards.Red.Rectangle />
-				<Cards.Default.Circle />
-				<Cards.Default.Rectangle />
-				<Cards.Red.Any />
-				<Cards.Default.Triangle />
-				<Cards.Red.Pentagon />
-				<Cards.Default.Pentagon />
-				<Cards.Red.Circle />
-				<Cards.Default.Branch />
-				<Cards.Red.Triangle />
-				<Cards.Default.Any />
+				<Card.Branch />
+				<Card.Blue.Any />
+				<Card.Blue.Circle />
+				<Card.Blue.Rectangle />
+				<Card.Blue.Triangle />
+
+				<Card.Red.Any />
+				<Card.Red.Circle />
+				<Card.Red.Pentagon />
+				<Card.Red.Rectangle />
+				<Card.Red.Triangle />
 			</section>
 
 			<div className={styles.cards__selected}>
