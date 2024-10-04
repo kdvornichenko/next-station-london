@@ -40,7 +40,6 @@ export default function LoginPage() {
 			<Input
 				label='Password'
 				variant='bordered'
-				placeholder='Password'
 				required
 				name='password'
 				value={password}
