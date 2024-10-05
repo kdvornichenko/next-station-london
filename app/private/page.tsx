@@ -1,24 +1,63 @@
-import { redirect } from 'next/navigation'
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Notes from '@/components/Notes'
+import { supabase } from '@/utils/supabase/client'
+import { User } from '@supabase/supabase-js'
 
-import { createClient } from '@/utils/supabase/server'
-import React from 'react'
+type TTodos = {
+	id: number
+	created_at: string
+	text: string
+}
 
-export default async function PrivatePage() {
-	const supabase = createClient()
+export default function PrivatePage() {
+	const router = useRouter()
 
-	const auth = await supabase.auth.getUser()
-	const { data: todos } = await supabase.from('todos').select()
+	// Указываем тип для состояния пользователя как User | null
+	const [user, setUser] = useState<User | null>(null)
+	const [todos, setTodos] = useState<TTodos[]>([])
 
-	if (auth.error || !auth.data?.user) {
-		redirect('/login')
+	useEffect(() => {
+		// Проверка сессии на клиентской стороне
+		const checkUser = async () => {
+			const {
+				data: { session },
+			} = await supabase.auth.getSession()
+
+			// Если сессии нет - перенаправляем на страницу логина
+			if (!session) {
+				router.push('/login')
+				return
+			}
+
+			// Если сессия существует - устанавливаем пользователя
+			setUser(session.user)
+
+			// Загружаем todos для авторизованного пользователя
+			const { data: todosData, error: todosError } = await supabase
+				.from('todos')
+				.select()
+
+			if (todosError) {
+				console.error('Error fetching todos:', todosError.message)
+			} else {
+				setTodos(todosData || [])
+			}
+		}
+
+		checkUser()
+	}, [router])
+
+	if (!user) {
+		return <p>Loading...</p>
 	}
 
 	return (
 		<>
-			<p>Hello {auth.data.user.email}</p>
-
-			{todos && <Notes initialTodos={todos} />}
+			<p>Hello {user.email}</p>
+			{todos.length > 0 && <Notes initialTodos={todos} />}
 		</>
 	)
 }

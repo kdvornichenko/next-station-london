@@ -1,104 +1,52 @@
 'use client'
 
-import { MutableRefObject, useEffect, useRef, useState } from 'react'
-import Cards from '@/components/Cards'
-import styles from '@/styles/main.module.scss'
-
-import Map from '@/components/Map/Map'
-import SvgSpite from '@/components/SvgSpite'
-import Abilities from '@/components/abilities'
-import Card from '@/components/Card'
+import { ArrowIcon } from '@/components/icons'
+import { Button, Card, CardBody, CardFooter, Input } from '@nextui-org/react'
+import Link from 'next/link'
 
 export default function Home() {
-	const [movedCards, setMovedCards] = useState<Element[]>([])
-	const [redCardsCounter, setRedCardsCounter] = useState<number>(0)
-	const [refreshCardsCounter, setRefreshCardsCounter] = useState<number>(0)
-	const [isModalActive, setIsModalActive] = useState<boolean>(false)
-	const cardsContainerRef: MutableRefObject<HTMLElement | null> = useRef(null)
-	const cardsArea = useRef<HTMLDivElement | null>(null)
-
-	const onCardAreaClick = () => {
-		const cards = cardsContainerRef.current?.children
-		if (!cards || cards?.length === 0) return
-
-		const randomIndex = Math.floor(Math.random() * cards.length)
-		const randomCard = cards[randomIndex]
-
-		cardsArea.current?.insertAdjacentElement('beforebegin', randomCard)
-
-		setMovedCards([...movedCards, randomCard])
-
-		setTimeout(() => {
-			randomCard.hasAttribute('data-card-red') &&
-				setRedCardsCounter(redCardsCounter + 1)
-		}, 100)
-	}
-
-	useEffect(() => {
-		redCardsCounter === 5 && setIsModalActive(true)
-	}, [redCardsCounter])
-
-	const refreshCards = () => {
-		if (cardsContainerRef.current && cardsArea.current) {
-			movedCards.forEach(card => {
-				cardsContainerRef.current?.appendChild(card)
-			})
-		}
-
-		setMovedCards([])
-
-		setRedCardsCounter(0)
-
-		setRefreshCardsCounter(refreshCardsCounter + 1)
-		setIsModalActive(false)
-	}
-
-	const refreshAll = () => {
-		refreshCards()
-		setRefreshCardsCounter(0)
-		setIsModalActive(false)
-	}
-
 	return (
-		<div className={styles.cards}>
-			<SvgSpite />
-			<section
-				className={`${styles.cards__modal} ${isModalActive && styles.active}`}
-			>
-				<div className={styles.cards__modal_body}>
-					{refreshCardsCounter === 3 ? (
-						<button onClick={refreshAll}>Refresh All</button>
-					) : (
-						<button onClick={refreshCards}>Refresh Cards</button>
-					)}
+		<div>
+			<Card className='max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+				<CardBody>
+					<div className='flex flex-col gap-y-2'>
+						<p className=''>Код комнаты</p>
+						<div className='relative'>
+							<Input
+								fullWidth
+								size='lg'
+								classNames={{
+									input: ['uppercase'],
+								}}
+							/>
+							<Button
+								isIconOnly
+								size='md'
+								className='absolute right-1 top-1/2 -translate-y-1/2 bg-button-gradient animate-gradient-shift [background-size:400%]'
+							>
+								<ArrowIcon color='#fff' size={20} />
+							</Button>
+						</div>
+					</div>
+				</CardBody>
+				<div className='flex items-center gap-x-2'>
+					<div className='bg-divider border-none w-full h-divider' />
+					<span className='text-sm'>или</span>
+					<div className='bg-divider border-none w-full h-divider' />
 				</div>
-			</section>
-
-			<Abilities />
-
-			<Map />
-
-			<section className={styles.cards__container} ref={cardsContainerRef}>
-				<Card.Branch />
-				<Card.Blue.Any />
-				<Card.Blue.Circle />
-				<Card.Blue.Rectangle />
-				<Card.Blue.Triangle />
-
-				<Card.Red.Any />
-				<Card.Red.Circle />
-				<Card.Red.Pentagon />
-				<Card.Red.Rectangle />
-				<Card.Red.Triangle />
-			</section>
-
-			<div className={styles.cards__selected}>
-				<div
-					className={styles.cards__area}
-					ref={cardsArea}
-					onClick={onCardAreaClick}
-				/>
-			</div>
+				<CardFooter>
+					<Button
+						fullWidth
+						type='button'
+						variant='solid'
+						className='bg-button-gradient animate-gradient-shift [background-size:400%]'
+						as={Link}
+						href={'/game'}
+					>
+						Создать комнату
+					</Button>
+				</CardFooter>
+			</Card>
 		</div>
 	)
 }

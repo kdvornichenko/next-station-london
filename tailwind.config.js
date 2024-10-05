@@ -1,30 +1,43 @@
-import { nextui } from '@nextui-org/react'
+import { nextui } from '@nextui-org/react';
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'
+    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}', // Подключаем компоненты NextUI
   ],
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)"],
-        mono: ["var(--font-mono)"],
+        sans: ['var(--font-sans)'],
+        mono: ['var(--font-mono)'],
+      },
+      backgroundImage: {
+        // Определяем кастомный градиент
+        'button-gradient': 'linear-gradient(90deg, #ED127B, #602F93, #00ADEF, #40B93C)',
+      },
+      colors: {
+        primary: '#45D483',
       },
       animation: {
         'dash-animation': 'dash-spin 1s infinite linear',
+        'gradient-shift': 'gradient-shift 15s infinite ease-in-out',
       },
       keyframes: {
         'dash-spin': {
           '0%': { 'stroke-dashoffset': 0 },
           '100%': { 'stroke-dashoffset': 16 },
-        }
-      }
+        },
+        'gradient-shift': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
+      },
     },
   },
-  darkMode: "class",
+  darkMode: 'class', // Поддержка темной темы
   plugins: [
     nextui(),
     function ({ addComponents }) {
@@ -40,7 +53,7 @@ module.exports = {
           justifyContent: 'center',
           backgroundColor: 'white',
         },
-      })
-    }
+      });
+    },
   ],
-}
+};

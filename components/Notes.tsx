@@ -1,11 +1,10 @@
 'use client'
 
+import { supabase } from '@/utils/supabase/client'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
 
 export default function Notes({ initialTodos }: { initialTodos: any[] }) {
 	const [todos, setTodos] = useState(initialTodos)
-	const supabase = createClient()
 
 	useEffect(() => {
 		const channel = supabase

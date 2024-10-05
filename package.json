@@ -24,6 +24,7 @@
 		"@nextui-org/theme": "2.2.9",
 		"@react-aria/ssr": "3.9.4",
 		"@react-aria/visually-hidden": "3.8.12",
+		"@supabase/auth-helpers-nextjs": "^0.10.0",
 		"@supabase/ssr": "^0.5.1",
 		"@supabase/supabase-js": "^2.45.4",
 		"clsx": "2.1.1",
