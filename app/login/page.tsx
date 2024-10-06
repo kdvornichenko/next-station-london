@@ -6,6 +6,8 @@ import { supabase } from '@/utils/supabase/client'
 
 export default function LoginPage() {
 	const userContext = useContext(UserContext)
+	console.log(process.env.NODE_ENV)
+	console.log(window.location.origin)
 
 	// Проверяем, инициализирован ли контекст
 	if (!userContext) {
@@ -23,7 +25,7 @@ export default function LoginPage() {
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
-				redirectTo: redirectUrl, // Используем правильный URL для редиректа
+				redirectTo: redirectUrl,
 			},
 		})
 		if (error) console.log('Error logging in with Google:', error.message)
