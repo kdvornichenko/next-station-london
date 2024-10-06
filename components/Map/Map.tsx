@@ -121,7 +121,7 @@ const Map = () => {
 				viewBox='0 0 532 924'
 				fill='none'
 				xmlns='http://www.w3.org/2000/svg'
-				className='w-full h-full'
+				className='w-full h-full rounded-xl'
 			>
 				<UseSvg id='map-lines' className='pointer-events-none' />
 

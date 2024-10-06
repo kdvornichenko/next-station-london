@@ -22,7 +22,7 @@ export default function Home() {
 							<Button
 								isIconOnly
 								size='md'
-								className='absolute right-1 top-1/2 -translate-y-1/2 bg-button-gradient animate-gradient-shift [background-size:400%]'
+								className='absolute right-1 top-1/2 -translate-y-1/2 bg-metro-pink animate-bg-fade'
 							>
 								<ArrowIcon color='#fff' size={20} />
 							</Button>

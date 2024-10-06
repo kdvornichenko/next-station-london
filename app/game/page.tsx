@@ -1,6 +1,12 @@
 'use client'
 
-import { MutableRefObject, useEffect, useRef, useState } from 'react'
+import {
+	MutableRefObject,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 import Cards from '@/components/Cards'
 import styles from '@/styles/main.module.scss'
 
@@ -8,8 +14,7 @@ import Map from '@/components/Map/Map'
 import SvgSpite from '@/components/SvgSpite'
 import Abilities from '@/components/abilities'
 import Card from '@/components/Card'
-import { supabase } from '@/utils/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { UserContext } from '../providers'
 
 export default function Game() {
 	const [movedCards, setMovedCards] = useState<Element[]>([])
@@ -18,7 +23,6 @@ export default function Game() {
 	const [isModalActive, setIsModalActive] = useState<boolean>(false)
 	const cardsContainerRef: MutableRefObject<HTMLElement | null> = useRef(null)
 	const cardsArea = useRef<HTMLDivElement | null>(null)
-
 	const onCardAreaClick = () => {
 		const cards = cardsContainerRef.current?.children
 		if (!cards || cards?.length === 0) return
@@ -61,23 +65,7 @@ export default function Game() {
 		setIsModalActive(false)
 	}
 
-	const [user, setUser] = useState<User | null>(null)
-
-	useEffect(() => {
-		const getUserProfile = async () => {
-			const {
-				data: { session },
-			} = await supabase.auth.getSession()
-
-			setUser(session?.user ?? null)
-		}
-
-		supabase.auth.onAuthStateChange((_event, session) => {
-			setUser(session?.user ?? null)
-		})
-
-		getUserProfile()
-	}, [])
+	const { user } = useContext(UserContext)
 
 	return (
 		<div className={styles.cards}>
