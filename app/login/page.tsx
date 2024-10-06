@@ -15,18 +15,10 @@ export default function LoginPage() {
 	const { user, setUser } = userContext
 
 	const handleGoogleLogin = async () => {
-		const redirectUrl =
-			process.env.NODE_ENV === 'production'
-				? 'https://next-station-london.vercel.app/login'
-				: `${window.location.origin}/login`
-
-		console.log(redirectUrl)
-		
-
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
-				redirectTo: redirectUrl,
+				redirectTo: `${window.location.origin}/login`, // Редирект после логина
 			},
 		})
 		if (error) console.log('Error logging in with Google:', error.message)
