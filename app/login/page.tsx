@@ -6,8 +6,6 @@ import { supabase } from '@/utils/supabase/client'
 
 export default function LoginPage() {
 	const userContext = useContext(UserContext)
-	console.log(process.env.NODE_ENV)
-	console.log(window.location.origin)
 
 	// Проверяем, инициализирован ли контекст
 	if (!userContext) {
@@ -21,6 +19,9 @@ export default function LoginPage() {
 			process.env.NODE_ENV === 'production'
 				? 'https://next-station-london.vercel.app/login'
 				: `${window.location.origin}/login`
+
+		console.log(redirectUrl)
+		
 
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
