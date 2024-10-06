@@ -23,6 +23,8 @@ export default function Game() {
 	const [isModalActive, setIsModalActive] = useState<boolean>(false)
 	const cardsContainerRef: MutableRefObject<HTMLElement | null> = useRef(null)
 	const cardsArea = useRef<HTMLDivElement | null>(null)
+	const userContext = useContext(UserContext)
+
 	const onCardAreaClick = () => {
 		const cards = cardsContainerRef.current?.children
 		if (!cards || cards?.length === 0) return
@@ -65,7 +67,12 @@ export default function Game() {
 		setIsModalActive(false)
 	}
 
-	const { user } = useContext(UserContext)
+	// Проверяем, инициализирован ли контекст
+	if (!userContext) {
+		return <div>Загрузка...</div>
+	}
+
+	const { user } = userContext
 
 	return (
 		<div className={styles.cards}>
