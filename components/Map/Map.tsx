@@ -94,8 +94,8 @@ const Map = () => {
 	}
 
 	return (
-		<div className='map'>
-			<ColorPicker />
+		<div className='map w-full h-full flex items-center justify-center overflow-auto'>
+			{/* <ColorPicker />
 			<div>
 				<input
 					type='checkbox'
@@ -114,14 +114,14 @@ const Map = () => {
 				>
 					Toggle
 				</button>
-			</div>
+			</div> */}
 			<svg
 				width='532'
 				height='924'
 				viewBox='0 0 532 924'
 				fill='none'
 				xmlns='http://www.w3.org/2000/svg'
-				className='w-full h-full rounded-xl'
+				className='w-auto h-full rounded-xl'
 			>
 				<UseSvg id='map-lines' className='pointer-events-none' />
 

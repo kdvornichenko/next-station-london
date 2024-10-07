@@ -23,4 +23,8 @@
             opacity: 1;
         }
     }
+
+    .card {
+        @apply [box-shadow:5px_5px_40px_var(--tw-shadow-color)] shadow-slate-700/30 border border-gray-800/20 bg-gray-950/5  [backdrop-filter:blur(3px)] !important;
+    }
 }

@@ -1,13 +1,22 @@
 'use client'
 
 import { ArrowIcon } from '@/components/icons'
-import { Button, Card, CardBody, CardFooter, Input } from '@nextui-org/react'
+import {
+	Button,
+	Card,
+	CardBody,
+	CardFooter,
+	Input,
+	Spinner,
+} from '@nextui-org/react'
 import Link from 'next/link'
+import { useState } from 'react'
 
 export default function Home() {
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 	return (
 		<div>
-			<Card className='max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+			<Card className='card max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
 				<CardBody>
 					<div className='flex flex-col gap-y-2'>
 						<p className=''>Код комнаты</p>
@@ -42,8 +51,18 @@ export default function Home() {
 						className='bg-button-gradient animate-gradient-shift [background-size:400%]'
 						as={Link}
 						href={'/game'}
+						onClick={() => setIsLoading(true)}
 					>
-						Создать комнату
+						{isLoading ? (
+							<Spinner
+								classNames={{
+									circle1: 'border-b-gray-950',
+									circle2: 'border-b-gray-950',
+								}}
+							/>
+						) : (
+							'Создать комнату'
+						)}
 					</Button>
 				</CardFooter>
 			</Card>

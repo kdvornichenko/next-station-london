@@ -11,10 +11,10 @@ import Cards from '@/components/Cards'
 import styles from '@/styles/main.module.scss'
 
 import Map from '@/components/Map/Map'
-import SvgSpite from '@/components/SvgSpite'
 import Abilities from '@/components/abilities'
 import Card from '@/components/Card'
 import { UserContext } from '../providers'
+import { Card as NextUICard, CardBody } from '@nextui-org/react'
 
 export default function Game() {
 	const [movedCards, setMovedCards] = useState<Element[]>([])
@@ -75,10 +75,8 @@ export default function Game() {
 	const { user } = userContext
 
 	return (
-		<div className={styles.cards}>
-			{!user ? 'Loading' : <div>Привет, {user.email}!</div>}
-			<SvgSpite />
-			<section
+		<div className='grid [grid-template-columns:_2fr_8fr_2fr] p-4 h-full'>
+			{/* <section
 				className={`${styles.cards__modal} ${isModalActive && styles.active}`}
 			>
 				<div className={styles.cards__modal_body}>
@@ -88,33 +86,41 @@ export default function Game() {
 						<button onClick={refreshCards}>Refresh Cards</button>
 					)}
 				</div>
-			</section>
+			</section> */}
 
-			<Abilities />
+			<NextUICard
+				className='card rounded-3xl max-w-[610px]'
+				shadow='none'
+				radius='none'
+			>
+				<CardBody>
+					<section className={styles.cards__container} ref={cardsContainerRef}>
+						<Card.Branch />
+						<Card.Blue.Any />
+						<Card.Blue.Circle />
+						<Card.Blue.Rectangle />
+						<Card.Blue.Triangle />
+
+						<Card.Red.Any />
+						<Card.Red.Circle />
+						<Card.Red.Pentagon />
+						<Card.Red.Rectangle />
+						<Card.Red.Triangle />
+					</section>
+
+					<div className={styles.cards__selected}>
+						<div
+							className={styles.cards__area}
+							ref={cardsArea}
+							onClick={onCardAreaClick}
+						/>
+					</div>
+				</CardBody>
+			</NextUICard>
 
 			<Map />
 
-			<section className={styles.cards__container} ref={cardsContainerRef}>
-				<Card.Branch />
-				<Card.Blue.Any />
-				<Card.Blue.Circle />
-				<Card.Blue.Rectangle />
-				<Card.Blue.Triangle />
-
-				<Card.Red.Any />
-				<Card.Red.Circle />
-				<Card.Red.Pentagon />
-				<Card.Red.Rectangle />
-				<Card.Red.Triangle />
-			</section>
-
-			<div className={styles.cards__selected}>
-				<div
-					className={styles.cards__area}
-					ref={cardsArea}
-					onClick={onCardAreaClick}
-				/>
-			</div>
+			<Abilities />
 		</div>
 	)
 }

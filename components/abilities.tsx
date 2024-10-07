@@ -38,7 +38,7 @@ const Abilities = () => {
 	}, [colors, abilities])
 
 	return (
-		<section className={styles.card__abilities}>
+		<section className=''>
 			{assignedColors.map(({ ability: AbilityComponent, color }, index) => (
 				<div key={index} className={styles.card__ability}>
 					<input type='checkbox' id={color} name={color} />
