@@ -5,18 +5,33 @@ import { Circle } from './Cards/Circle'
 import { Pentagon } from './Cards/Pentagon'
 import { Rectangle } from './Cards/Rectangle'
 import { Triangle } from './Cards/Triangle'
+import { TCard } from '@/types/card.types'
 
-const createCard = (color: string, className: string) => ({
-	Any: () => <Any color={color} className={className} />,
-	Circle: () => <Circle color={color} className={className} />,
-	Pentagon: () => <Pentagon color={color} className={className} />,
-	Rectangle: () => <Rectangle color={color} className={className} />,
-	Triangle: () => <Triangle color={color} className={className} />,
+const createCard = ({ color, className, isRed }: TCard) => ({
+	Any: () => <Any color={color} className={className} isRed={isRed} />,
+	Circle: () => <Circle color={color} className={className} isRed={isRed} />,
+	Pentagon: () => (
+		<Pentagon color={color} className={className} isRed={isRed} />
+	),
+	Rectangle: () => (
+		<Rectangle color={color} className={className} isRed={isRed} />
+	),
+	Triangle: () => (
+		<Triangle color={color} className={className} isRed={isRed} />
+	),
 })
 
 const Card = {
-	Red: createCard(colors.cardRed, 'w-full h-full'),
-	Blue: createCard(colors.cardBlue, 'w-full h-full'),
+	Red: createCard({
+		color: colors.cardRed,
+		className: 'w-full h-full',
+		isRed: true,
+	}),
+	Blue: createCard({
+		color: colors.cardBlue,
+		className: 'w-full h-full',
+		isRed: false,
+	}),
 	Branch: () => <Branch className='w-full h-full' />,
 }
 

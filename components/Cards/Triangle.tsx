@@ -1,7 +1,7 @@
 import { TCard } from '@/types/card.types'
 import { FC } from 'react'
 
-export const Triangle: FC<TCard> = ({ color, className }) => {
+export const Triangle: FC<TCard> = ({ color, className, isRed }) => {
 	return (
 		<svg
 			width='200'
@@ -9,6 +9,7 @@ export const Triangle: FC<TCard> = ({ color, className }) => {
 			viewBox='0 0 200 120'
 			fill='none'
 			className={className}
+			data-is-red={isRed}
 		>
 			<g clipPath='url(#clip0_18_276)'>
 				<rect width='200' height='120' rx='10' fill='white' />

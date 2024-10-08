@@ -1,3 +1,4 @@
+import { colors } from '@/store/colors.store'
 import { TCard } from '@/types/card.types'
 import { FC } from 'react'
 
@@ -8,7 +9,7 @@ export const Circle: FC<TCard> = ({ color, className }) => {
 			height='120'
 			viewBox='0 0 200 120'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'
+			data-is-red={color === colors.cardRed}
 			className={className}
 		>
 			<g clipPath='url(#clip0_18_221)'>

@@ -10,10 +10,8 @@ import {
 	Spinner,
 } from '@nextui-org/react'
 import Link from 'next/link'
-import { useState } from 'react'
 
 export default function Home() {
-	const [isLoading, setIsLoading] = useState<boolean>(false)
 	return (
 		<div>
 			<Card className='card max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
@@ -51,18 +49,8 @@ export default function Home() {
 						className='bg-button-gradient animate-gradient-shift [background-size:400%]'
 						as={Link}
 						href={'/game'}
-						onClick={() => setIsLoading(true)}
 					>
-						{isLoading ? (
-							<Spinner
-								classNames={{
-									circle1: 'border-b-gray-950',
-									circle2: 'border-b-gray-950',
-								}}
-							/>
-						) : (
-							'Создать комнату'
-						)}
+						Создать комнату
 					</Button>
 				</CardFooter>
 			</Card>

@@ -1,62 +1,80 @@
 'use client'
 
-import {
-	MutableRefObject,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-} from 'react'
-import Cards from '@/components/Cards'
+import React, { Suspense, useContext, useEffect, useRef, useState } from 'react'
+
 import styles from '@/styles/main.module.scss'
 
 import Map from '@/components/Map/Map'
 import Abilities from '@/components/abilities'
 import Card from '@/components/Card'
 import { UserContext } from '../providers'
-import { Card as NextUICard, CardBody } from '@nextui-org/react'
+import {
+	Card as NextUICard,
+	CardBody,
+	CardHeader,
+	Divider,
+	CardFooter,
+	Button,
+} from '@nextui-org/react'
+import Loading from '../loading'
 
 export default function Game() {
-	const [movedCards, setMovedCards] = useState<Element[]>([])
+	const [availableCards, setAvailableCards] = useState<JSX.Element[]>([
+		<Card.Branch />,
+		<Card.Blue.Any />,
+		<Card.Blue.Circle />,
+		<Card.Blue.Rectangle />,
+		<Card.Blue.Triangle />,
+		<Card.Red.Any />,
+		<Card.Red.Circle />,
+		<Card.Red.Pentagon />,
+		<Card.Red.Rectangle />,
+		<Card.Red.Triangle />,
+	])
+	const [usedCards, setUsedCards] = useState<JSX.Element[]>([])
+	const [selectedCards, setSelectedCards] = useState<JSX.Element[]>([]) // Состояние для рендеринга выбранных карт
 	const [redCardsCounter, setRedCardsCounter] = useState<number>(0)
 	const [refreshCardsCounter, setRefreshCardsCounter] = useState<number>(0)
 	const [isModalActive, setIsModalActive] = useState<boolean>(false)
-	const cardsContainerRef: MutableRefObject<HTMLElement | null> = useRef(null)
-	const cardsArea = useRef<HTMLDivElement | null>(null)
 	const userContext = useContext(UserContext)
 
 	const onCardAreaClick = () => {
-		const cards = cardsContainerRef.current?.children
-		if (!cards || cards?.length === 0) return
+		if (availableCards.length === 0) return // Проверка, что есть доступные карты
 
-		const randomIndex = Math.floor(Math.random() * cards.length)
-		const randomCard = cards[randomIndex]
+		const randomIndex = Math.floor(Math.random() * availableCards.length)
+		const randomCard = availableCards[randomIndex]
 
-		cardsArea.current?.insertAdjacentElement('beforebegin', randomCard)
+		// Добавляем карту в область рендеринга
+		setSelectedCards([...selectedCards, randomCard])
 
-		setMovedCards([...movedCards, randomCard])
+		// Удаляем выбранную карту из списка доступных
+		const updatedAvailableCards = availableCards.filter(
+			(_, index) => index !== randomIndex
+		)
+		setAvailableCards(updatedAvailableCards)
 
+		// Добавляем карту в список использованных
+		setUsedCards([...usedCards, randomCard])
+
+		// Увеличиваем счётчик, если карта красная
 		setTimeout(() => {
-			randomCard.hasAttribute('data-card-red') &&
+			if (randomCard.props && randomCard.props['data-card-red']) {
 				setRedCardsCounter(redCardsCounter + 1)
+			}
 		}, 100)
 	}
 
 	useEffect(() => {
-		redCardsCounter === 5 && setIsModalActive(true)
+		if (redCardsCounter === 5) {
+			setIsModalActive(true)
+		}
 	}, [redCardsCounter])
 
 	const refreshCards = () => {
-		if (cardsContainerRef.current && cardsArea.current) {
-			movedCards.forEach(card => {
-				cardsContainerRef.current?.appendChild(card)
-			})
-		}
-
-		setMovedCards([])
-
+		setAvailableCards([...availableCards, ...usedCards]) // Возвращаем все карты
+		setUsedCards([])
+		setSelectedCards([]) // Сбрасываем выбранные карты
 		setRedCardsCounter(0)
-
 		setRefreshCardsCounter(refreshCardsCounter + 1)
 		setIsModalActive(false)
 	}
@@ -75,52 +93,43 @@ export default function Game() {
 	const { user } = userContext
 
 	return (
-		<div className='grid [grid-template-columns:_2fr_8fr_2fr] p-4 h-full'>
-			{/* <section
-				className={`${styles.cards__modal} ${isModalActive && styles.active}`}
-			>
-				<div className={styles.cards__modal_body}>
-					{refreshCardsCounter === 3 ? (
-						<button onClick={refreshAll}>Refresh All</button>
-					) : (
-						<button onClick={refreshCards}>Refresh Cards</button>
-					)}
-				</div>
-			</section> */}
+		<Suspense fallback={<Loading />}>
+			<div className='grid [grid-template-columns:_2fr_8fr_2fr] p-4 h-full'>
+				<NextUICard
+					className='card rounded-3xl max-w-[610px]'
+					shadow='none'
+					radius='none'
+				>
+					<CardHeader>
+						<Abilities />
+					</CardHeader>
 
-			<NextUICard
-				className='card rounded-3xl max-w-[610px]'
-				shadow='none'
-				radius='none'
-			>
-				<CardBody>
-					<section className={styles.cards__container} ref={cardsContainerRef}>
-						<Card.Branch />
-						<Card.Blue.Any />
-						<Card.Blue.Circle />
-						<Card.Blue.Rectangle />
-						<Card.Blue.Triangle />
+					<Divider />
 
-						<Card.Red.Any />
-						<Card.Red.Circle />
-						<Card.Red.Pentagon />
-						<Card.Red.Rectangle />
-						<Card.Red.Triangle />
-					</section>
+					<CardBody>
+						{/* Контейнер для добавления случайных карт */}
+						<div className={styles.cards__selected}>
+							{selectedCards.map((card, index) => (
+								<React.Fragment key={index}>{card}</React.Fragment>
+							))}
+							<div
+								className={styles.cards__area}
+								onClick={onCardAreaClick}
+							></div>
+						</div>
+					</CardBody>
 
-					<div className={styles.cards__selected}>
-						<div
-							className={styles.cards__area}
-							ref={cardsArea}
-							onClick={onCardAreaClick}
-						/>
-					</div>
-				</CardBody>
-			</NextUICard>
+					<Divider />
 
-			<Map />
+					<CardFooter>
+						<Button onClick={refreshCards} color='warning'>
+							Refresh
+						</Button>
+					</CardFooter>
+				</NextUICard>
 
-			<Abilities />
-		</div>
+				<Map />
+			</div>
+		</Suspense>
 	)
 }

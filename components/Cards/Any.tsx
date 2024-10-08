@@ -1,15 +1,16 @@
+import { colors } from '@/store/colors.store'
 import { TCard } from '@/types/card.types'
 import { FC } from 'react'
 
-export const Any: FC<TCard> = ({ color, className }) => {
+export const Any: FC<TCard> = ({ color, className, isRed }) => {
 	return (
 		<svg
 			width='200'
 			height='120'
 			viewBox='0 0 200 120'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'
 			className={className}
+			data-is-red={isRed}
 		>
 			<g clipPath='url(#clip0_4_3655)'>
 				<rect width='200' height='120' rx='10' fill='white' />

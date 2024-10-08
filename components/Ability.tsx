@@ -2,16 +2,17 @@ import { FC } from 'react'
 
 type TAbility = {
 	color: string
+	className?: string
 }
 
-const Any: FC<TAbility> = ({ color }): JSX.Element => {
+const Any: FC<TAbility> = ({ color, className }): JSX.Element => {
 	return (
 		<svg
 			width='120'
 			height='120'
 			viewBox='0 0 120 120'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'
+			className={className}
 		>
 			<rect x='1' y='1' width='120' height='120' rx='9' fill='white' />
 			<rect
@@ -115,14 +116,14 @@ const Any: FC<TAbility> = ({ color }): JSX.Element => {
 	)
 }
 
-const Branch: FC<TAbility> = ({ color }): JSX.Element => {
+const Branch: FC<TAbility> = ({ color, className }): JSX.Element => {
 	return (
 		<svg
 			width='120'
 			height='120'
 			viewBox='0 0 120 120'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'
+			className={className}
 		>
 			<rect x='1' y='1' width='120' height='120' rx='9' fill='white' />
 			<rect
@@ -183,14 +184,14 @@ const Branch: FC<TAbility> = ({ color }): JSX.Element => {
 	)
 }
 
-const Double: FC<TAbility> = ({ color }): JSX.Element => {
+const Double: FC<TAbility> = ({ color, className }): JSX.Element => {
 	return (
 		<svg
 			width='120'
 			height='120'
 			viewBox='0 0 120 120'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'
+			className={className}
 		>
 			<rect x='1' y='1' width='120' height='120' rx='9' fill='white' />
 			<rect
@@ -220,14 +221,14 @@ const Double: FC<TAbility> = ({ color }): JSX.Element => {
 	)
 }
 
-const Repeat: FC<TAbility> = ({ color }): JSX.Element => {
+const Repeat: FC<TAbility> = ({ color, className }): JSX.Element => {
 	return (
 		<svg
 			width='120'
 			height='120'
 			viewBox='0 0 120 120'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'
+			className={className}
 		>
 			<rect x='1' y='1' width='120' height='120' rx='9' fill='white' />
 			<rect

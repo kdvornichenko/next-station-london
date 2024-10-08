@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import styles from '@/styles/main.module.scss'
 import Ability from './Ability'
 
 const Abilities = () => {
@@ -18,7 +17,10 @@ const Abilities = () => {
 	])
 
 	const [assignedColors, setAssignedColors] = useState<
-		{ ability: React.FC<{ color: string }>; color: string }[]
+		{
+			ability: React.FC<{ color: string; className: string }>
+			color: string
+		}[]
 	>([])
 
 	const assignColorsToAbilities = () => {
@@ -38,12 +40,20 @@ const Abilities = () => {
 	}, [colors, abilities])
 
 	return (
-		<section className=''>
+		<section className='grid grid-flow-col gap-x-3'>
 			{assignedColors.map(({ ability: AbilityComponent, color }, index) => (
-				<div key={index} className={styles.card__ability}>
-					<input type='checkbox' id={color} name={color} />
-					<label htmlFor={color}>
-						<AbilityComponent color={color} />
+				<div key={index} className='rounded-xl overflow-hidden'>
+					<input
+						type='checkbox'
+						id={color}
+						name={color}
+						className='hidden peer'
+					/>
+					<label
+						htmlFor={color}
+						className='peer-checked:opacity-30 cursor-pointer transition-opacity'
+					>
+						<AbilityComponent color={color} className='w-full h-full ' />
 					</label>
 				</div>
 			))}
