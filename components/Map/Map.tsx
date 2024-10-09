@@ -4,7 +4,6 @@ import { useStationsStore } from '@/store/stations.store'
 import { TSvgCircle, TSvgLine } from '@/types/map.types'
 import { colors, useColorStore } from '@/store/colors.store'
 import { SVGCircle, SVGLine } from './Geometries'
-import ColorPicker from './ColorPicker'
 import UseSvg from '../UseSvg'
 import Score from '../Score/Score'
 
@@ -95,8 +94,7 @@ const Map = () => {
 
 	return (
 		<div className='map w-full h-full flex items-center justify-center overflow-auto'>
-			{/* <ColorPicker />
-			<div>
+			{/* <div>
 				<input
 					type='checkbox'
 					id='delete-line'

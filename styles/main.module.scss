@@ -124,22 +124,6 @@
     }
 }
 
-.cards__area {
-    width: 100%;
-    max-width: 400px;
-    aspect-ratio: 16 / 9;
-    margin: auto;
-
-    border: 2px dashed grey;
-    border-radius: 18px;
-
-    cursor: pointer;
-    transition: all 0.3s ease;
-    &:hover {
-        border: 2px solid white;
-    }
-}
-
 .cards__mapBtn {
     position: fixed;
     top: 120px;

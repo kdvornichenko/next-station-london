@@ -1,7 +1,11 @@
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import { colors, TColorValues, useColorStore } from '@/store/colors.store'
 
-const ColorPicker = () => {
+type TColorPicker = {
+	className?: string
+}
+
+const ColorPicker: FC<TColorPicker> = ({ className }) => {
 	const { setCurrentColor } = useColorStore()
 	const [selectedColor, setSelectedColor] = useState<TColorValues>(colors.pink)
 
@@ -18,7 +22,7 @@ const ColorPicker = () => {
 	}
 
 	return (
-		<div className='flex gap-x-1 mb-4'>
+		<div className={`flex gap-x-1 ${className || ''}`}>
 			{availableColors.map(color => (
 				<div key={color + 'radio'}>
 					<input

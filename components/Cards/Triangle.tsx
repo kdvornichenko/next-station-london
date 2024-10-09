@@ -12,7 +12,6 @@ export const Triangle: FC<TCard> = ({ color, className, isRed }) => {
 			data-is-red={isRed}
 		>
 			<g clipPath='url(#clip0_18_276)'>
-				<rect width='200' height='120' rx='10' fill='white' />
 				<path
 					d='M2 10C2 5.58172 5.58172 2 10 2H190C194.418 2 198 5.58172 198 10V111H2V10Z'
 					fill={color}
@@ -168,20 +167,6 @@ export const Triangle: FC<TCard> = ({ color, className, isRed }) => {
 					stroke='black'
 				/>
 			</g>
-			<rect
-				x='1'
-				y='1'
-				width='198'
-				height='118'
-				rx='9'
-				stroke='black'
-				strokeWidth='2'
-			/>
-			<defs>
-				<clipPath id='clip0_18_276'>
-					<rect width='200' height='120' rx='10' fill='white' />
-				</clipPath>
-			</defs>
 		</svg>
 	)
 }

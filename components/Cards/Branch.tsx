@@ -8,7 +8,7 @@ export const Branch = ({ className }: { className?: string }) => {
 			className={className}
 		>
 			<g clipPath='url(#clip0_3_3541)'>
-				<rect width='200' height='120' rx='10' fill='white' />
+			
 				<path
 					d='M2 10C2 5.58172 5.58172 2 10 2H190C194.418 2 198 5.58172 198 10V111H2V10Z'
 					fill='#7DBAD7'
@@ -220,20 +220,6 @@ export const Branch = ({ className }: { className?: string }) => {
 				<path d='M116 96H118.5' stroke='black' />
 				<line y1='112.5' x2='200' y2='112.5' stroke='#04276B' strokeWidth='3' />
 			</g>
-			<rect
-				x='1'
-				y='1'
-				width='198'
-				height='118'
-				rx='9'
-				stroke='black'
-				strokeWidth='2'
-			/>
-			<defs>
-				<clipPath id='clip0_3_3541'>
-					<rect width='200' height='120' rx='10' fill='white' />
-				</clipPath>
-			</defs>
 		</svg>
 	)
 }

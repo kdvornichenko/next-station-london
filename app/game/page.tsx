@@ -1,6 +1,12 @@
 'use client'
 
-import React, { Suspense, useContext, useEffect, useRef, useState } from 'react'
+import React, {
+	CSSProperties,
+	Suspense,
+	useContext,
+	useEffect,
+	useState,
+} from 'react'
 
 import styles from '@/styles/main.module.scss'
 
@@ -17,6 +23,12 @@ import {
 	Button,
 } from '@nextui-org/react'
 import Loading from '../loading'
+import { TColorValues, useColorStore } from '@/store/colors.store'
+import SettingsPanel from '@/components/SettingsPanel'
+// Определяем тип для CSS-переменной
+interface CustomCSSProperties extends CSSProperties {
+	'--nsl-current-color'?: TColorValues | null
+}
 
 export default function Game() {
 	const [availableCards, setAvailableCards] = useState<JSX.Element[]>([
@@ -25,18 +37,20 @@ export default function Game() {
 		<Card.Blue.Circle />,
 		<Card.Blue.Rectangle />,
 		<Card.Blue.Triangle />,
-		<Card.Red.Any />,
-		<Card.Red.Circle />,
-		<Card.Red.Pentagon />,
-		<Card.Red.Rectangle />,
-		<Card.Red.Triangle />,
+		<Card.Red.Any data-card-red />,
+		<Card.Red.Circle data-card-red />,
+		<Card.Red.Pentagon data-card-red />,
+		<Card.Red.Rectangle data-card-red />,
+		<Card.Red.Triangle data-card-red />,
 	])
 	const [usedCards, setUsedCards] = useState<JSX.Element[]>([])
 	const [selectedCards, setSelectedCards] = useState<JSX.Element[]>([]) // Состояние для рендеринга выбранных карт
 	const [redCardsCounter, setRedCardsCounter] = useState<number>(0)
-	const [refreshCardsCounter, setRefreshCardsCounter] = useState<number>(0)
-	const [isModalActive, setIsModalActive] = useState<boolean>(false)
+	const [roundsCounter, setRoundsCounter] = useState<number>(1)
+	const [isRoundOver, setIsRoundOver] = useState<boolean>(false)
+	const [isGameOver, setIsGameOver] = useState<boolean>(false)
 	const userContext = useContext(UserContext)
+	const { currentColor } = useColorStore()
 
 	const onCardAreaClick = () => {
 		if (availableCards.length === 0) return // Проверка, что есть доступные карты
@@ -66,69 +80,93 @@ export default function Game() {
 
 	useEffect(() => {
 		if (redCardsCounter === 5) {
-			setIsModalActive(true)
+			setIsRoundOver(true)
 		}
 	}, [redCardsCounter])
 
 	const refreshCards = () => {
+		if (!isRoundOver) return
+
 		setAvailableCards([...availableCards, ...usedCards]) // Возвращаем все карты
 		setUsedCards([])
 		setSelectedCards([]) // Сбрасываем выбранные карты
 		setRedCardsCounter(0)
-		setRefreshCardsCounter(refreshCardsCounter + 1)
-		setIsModalActive(false)
+		setRoundsCounter(roundsCounter + 1)
+		setIsRoundOver(false)
 	}
 
-	const refreshAll = () => {
-		refreshCards()
-		setRefreshCardsCounter(0)
-		setIsModalActive(false)
-	}
+	useEffect(() => {
+		if (roundsCounter === 5) {
+			setIsGameOver(true)
+		}
+	}, [roundsCounter])
+
+	useEffect(() => {}, [currentColor])
 
 	// Проверяем, инициализирован ли контекст
 	if (!userContext) {
 		return <div>Загрузка...</div>
 	}
 
-	const { user } = userContext
+	const gridStyles: CustomCSSProperties = {
+		...(currentColor ? { '--nsl-current-color': currentColor } : {}),
+	}
 
 	return (
 		<Suspense fallback={<Loading />}>
-			<div className='grid [grid-template-columns:_2fr_8fr_2fr] p-4 h-full'>
-				<NextUICard
-					className='card rounded-3xl max-w-[610px]'
-					shadow='none'
-					radius='none'
-				>
-					<CardHeader>
-						<Abilities />
-					</CardHeader>
+			<div className='h-full' style={gridStyles}>
+				<SettingsPanel />
 
-					<Divider />
+				<div className='grid [grid-template-columns:_2fr_8fr_2fr] p-4 h-full'>
+					<NextUICard
+						className={`card rounded-3xl max-w-[610px] shadow-[var(--nsl-current-color)] [transition:all_0.7s_ease]`}
+						shadow='none'
+						radius='none'
+					>
+						<CardHeader>
+							<Abilities />
+						</CardHeader>
 
-					<CardBody>
-						{/* Контейнер для добавления случайных карт */}
-						<div className={styles.cards__selected}>
-							{selectedCards.map((card, index) => (
-								<React.Fragment key={index}>{card}</React.Fragment>
-							))}
-							<div
-								className={styles.cards__area}
-								onClick={onCardAreaClick}
-							></div>
-						</div>
-					</CardBody>
+						<Divider />
 
-					<Divider />
+						<CardBody>
+							{/* Контейнер для добавления случайных карт */}
+							<div className={styles.cards__selected}>
+								{selectedCards.map((card, index) => (
+									<React.Fragment key={index}>{card}</React.Fragment>
+								))}
+								<div
+									className={`w-full max-w-sm aspect-video m-auto border-2 border-dashed border-slate-400 rounded-2xl cursor-pointer transition-all hover:border-solid hover:border-slate-50 ${
+										(isRoundOver || isGameOver) &&
+										'pointer-events-none opacity-0'
+									}`}
+									onClick={onCardAreaClick}
+								/>
+							</div>
+						</CardBody>
 
-					<CardFooter>
-						<Button onClick={refreshCards} color='warning'>
-							Refresh
-						</Button>
-					</CardFooter>
-				</NextUICard>
+						<Divider />
 
-				<Map />
+						<CardFooter className='justify-between'>
+							{isGameOver ? 'Game Over' : roundsCounter}
+							{!isGameOver && (
+								<Button
+									onClick={refreshCards}
+									color='secondary'
+									className={
+										isRoundOver
+											? 'pointer-events-auto'
+											: 'pointer-events-none opacity-50'
+									}
+								>
+									Refresh
+								</Button>
+							)}
+						</CardFooter>
+					</NextUICard>
+
+					<Map />
+				</div>
 			</div>
 		</Suspense>
 	)

@@ -14,7 +14,7 @@ import Link from 'next/link'
 export default function Home() {
 	return (
 		<div>
-			<Card className='card max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+			<Card className='card max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-slate-400/30'>
 				<CardBody>
 					<div className='flex flex-col gap-y-2'>
 						<p className=''>Код комнаты</p>
@@ -46,7 +46,7 @@ export default function Home() {
 						fullWidth
 						type='button'
 						variant='solid'
-						className='bg-button-gradient animate-gradient-shift [background-size:400%]'
+						className='animate-gradient-shift bg-button-gradient [background-size:400%]'
 						as={Link}
 						href={'/game'}
 					>
