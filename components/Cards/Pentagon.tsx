@@ -1,14 +1,13 @@
 import { TCard } from '@/types/card.types'
 import { FC } from 'react'
 
-export const Pentagon: FC<TCard> = ({ color, className, isRed }) => {
+export const Pentagon: FC<TCard> = ({ color, className }) => {
 	return (
 		<svg
 			width='200'
 			height='120'
 			viewBox='0 0 200 120'
 			fill='none'
-			data-is-red={isRed}
 			className={className}
 		>
 			<g clipPath='url(#clip0_18_50)'>
