@@ -13,6 +13,12 @@ module.exports = {
         sans: ['var(--font-sans)'],
         mono: ['var(--font-mono)'],
       },
+      boxShadow: {
+        'custom': '5px 5px 40px var(--tw-shadow-color)',
+      },
+      backdropFilter: {
+        'blur-custom': 'blur(3px)',
+      },
       backgroundImage: {
         // Определяем кастомный градиент
         'button-gradient': 'linear-gradient(90deg, #ED127B, #602F93, #00ADEF, #40B93C)',
@@ -23,6 +29,9 @@ module.exports = {
         'metro-purple': '#602F93',
         'metro-blue': '#00ADEF',
         'metro-green': '#40B93C',
+        'card-red': '#FF1D5C',
+        'card-blue': '#7DBAD7',
+        'current-color': 'var(--nsl-current-color)'
       },
       animation: {
         'dash-animation': 'dash-spin 1s infinite linear',

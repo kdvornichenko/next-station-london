@@ -1,20 +1,128 @@
 'use client'
 
 import { ArrowIcon } from '@/components/icons'
-import {
-	Button,
-	Card,
-	CardBody,
-	CardFooter,
-	Input,
-	Spinner,
-} from '@nextui-org/react'
-import Link from 'next/link'
+import { supabase } from '@/utils/supabase/client'
+import { Button, Card, CardBody, CardFooter, Input } from '@nextui-org/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { User } from '@supabase/supabase-js'
+import { checkUserSession } from '@/utils/auth/checkUserSession'
+import { useRoomStore } from '@/store/room.store'
 
 export default function Home() {
+	const router = useRouter()
+	const { setRoomName } = useRoomStore()
+	const [roomCode, setRoomCode] = useState<string>('')
+	const [user, setUser] = useState<User | null>(null)
+	const [errorMessage, setErrorMessage] = useState<string>('')
+
+	useEffect(() => {
+		// Вызываем утилиту для проверки сессии
+		checkUserSession(router, setUser)
+	}, [router])
+
+	const generateRoomName = () => {
+		// Функция для генерации случайного 4-буквенного имени
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+		let result = ''
+		for (let i = 0; i < 4; i++) {
+			result += characters.charAt(Math.floor(Math.random() * characters.length))
+		}
+		return result
+	}
+
+	const checkRoomExists = async (roomName: string): Promise<boolean> => {
+		try {
+			const { data, error } = await supabase
+				.from('rooms')
+				.select('id')
+				.eq('name', roomName)
+
+			if (error) {
+				console.error('Ошибка при проверке имени комнаты:', error)
+				return false
+			}
+
+			return data && data.length > 0
+		} catch (err) {
+			console.error('Ошибка при проверке комнаты:', err)
+			return false
+		}
+	}
+
+	const createRoom = async (roomName: string): Promise<boolean> => {
+		try {
+			const { data, error } = await supabase
+				.from('rooms')
+				.insert([{ name: roomName, uuid: user?.id }])
+				.select()
+
+			if (error) {
+				console.error('Ошибка при создании комнаты:', error)
+				return false
+			}
+
+			return data && data.length > 0
+		} catch (err) {
+			console.error('Ошибка при создании комнаты:', err)
+			return false
+		}
+	}
+
+	const navigateToRoom = (roomName: string) => {
+		setRoomName(roomName)
+		router.push(`/game?room_name=${roomName}`)
+	}
+
+	const handleCreateRoom = async () => {
+		if (!user) {
+			setTimeout(() => {
+				handleCreateRoom()
+			}, 200)
+			return
+		}
+
+		let roomName = generateRoomName()
+		let roomExists = await checkRoomExists(roomName)
+
+		// Повторяем, пока не найдётся уникальное имя
+		while (roomExists) {
+			roomName = generateRoomName()
+			roomExists = await checkRoomExists(roomName)
+		}
+
+		const isCreated = await createRoom(roomName)
+		if (isCreated) {
+			navigateToRoom(roomName)
+		} else {
+			console.error('Не удалось создать комнату')
+		}
+	}
+
+	const handleRoomCodeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value.toUpperCase()
+		if (value.length > 4) return
+		setRoomCode(value)
+		if (errorMessage) setErrorMessage('')
+	}
+
+	const onRoomEnterClick = async () => {
+		if (roomCode.length !== 4) {
+			setErrorMessage('Код комнаты должен состоять из 4 букв.')
+			return
+		}
+
+		const roomExists = await checkRoomExists(roomCode)
+		if (roomExists) {
+			navigateToRoom(roomCode)
+		} else {
+			setErrorMessage('Комната с таким кодом не найдена.')
+		}
+	}
+
 	return (
 		<div>
-			<Card className='card max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-slate-400/30'>
+			<Card className='card card-shadow max-w-80 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-slate-400/30'>
 				<CardBody>
 					<div className='flex flex-col gap-y-2'>
 						<p className=''>Код комнаты</p>
@@ -22,18 +130,26 @@ export default function Home() {
 							<Input
 								fullWidth
 								size='lg'
-								classNames={{
-									input: ['uppercase'],
-								}}
+								classNames={{ input: ['uppercase'] }}
+								value={roomCode}
+								onInput={handleRoomCodeInput}
 							/>
 							<Button
 								isIconOnly
 								size='md'
-								className='absolute right-1 top-1/2 -translate-y-1/2 bg-metro-pink animate-bg-fade'
+								className={`${
+									roomCode.length === 4
+										? 'opacity-100 pointer-events-auto'
+										: 'opacity-20 pointer-events-none'
+								} absolute right-1 top-1/2 -translate-y-1/2 bg-metro-pink animate-bg-fade`}
+								onClick={onRoomEnterClick}
 							>
 								<ArrowIcon color='#fff' size={20} />
 							</Button>
 						</div>
+						{errorMessage && (
+							<p className='text-red-500 text-sm mt-2'>{errorMessage}</p>
+						)}
 					</div>
 				</CardBody>
 				<div className='flex items-center gap-x-2'>
@@ -47,8 +163,7 @@ export default function Home() {
 						type='button'
 						variant='solid'
 						className='animate-gradient-shift bg-button-gradient [background-size:400%]'
-						as={Link}
-						href={'/game'}
+						onClick={handleCreateRoom}
 					>
 						Создать комнату
 					</Button>

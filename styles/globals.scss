@@ -25,6 +25,14 @@
     }
 
     .card {
-        @apply [box-shadow:5px_5px_40px_var(--tw-shadow-color)] border border-gray-800/20 bg-gray-950/5  [backdrop-filter:blur(3px)] !important;
+        @apply border border-gray-800/20 bg-gray-950/5 [backdrop-filter:blur(3px)] shadow-custom transition-shadow duration-700 ease-in-out !important;
+    }
+
+    .card-shadow {
+        @apply [box-shadow:5px_5px_40px_var(--tw-shadow-color)] !important;
+    }
+
+    .card-shadow-colored {
+        @apply shadow-[var(--nsl-current-color)] !important;
     }
 }
