@@ -53,7 +53,9 @@ export default function LoginPage() {
 					</Button>
 				</>
 			) : (
-				<Button onClick={handleGoogleLogin}>Войти через Google</Button>
+				<Button color='success' onClick={handleGoogleLogin}>
+					Войти через Google
+				</Button>
 			)}
 		</div>
 	)
