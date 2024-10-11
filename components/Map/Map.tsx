@@ -6,6 +6,7 @@ import { colors, useColorStore } from '@/store/colors.store'
 import { SVGCircle, SVGLine } from './Geometries'
 import UseSvg from '../UseSvg'
 import Score from '../Score/Score'
+import { Checkbox, Input } from '@nextui-org/react'
 
 const Map = () => {
 	const { stationFirst, setStationFirst, stationSecond, setStationSecond } =
@@ -94,14 +95,7 @@ const Map = () => {
 
 	return (
 		<div className='map w-full h-full flex items-center justify-center overflow-auto'>
-			{/* <div>
-				<input
-					type='checkbox'
-					id='delete-line'
-					onChange={e => setIsLineRemovable(e.target.checked)}
-				/>
-				<label htmlFor='delete-line'>Удалить линию</label>
-			</div>
+			{/* 
 			<div className='fixed top-1/4 left-1/3 hidden flex-col z-10'>
 				<input type='number' placeholder='x' id='x' />
 				<input type='number' placeholder='y' id='y' />
@@ -141,6 +135,13 @@ const Map = () => {
 
 				{/* Верхний и нижний шаблон карты */}
 				<UseSvg id='map-top-bot' className='pointer-events-none' />
+				<foreignObject width={'100%'} height={'100%'}>
+					<div className='bg-black'>
+						<Checkbox onChange={e => setIsLineRemovable(e.target.checked)}>
+							Удалить линию
+						</Checkbox>
+					</div>
+				</foreignObject>
 				<Score />
 			</svg>
 		</div>
