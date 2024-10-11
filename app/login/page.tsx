@@ -3,6 +3,7 @@
 import { useContext } from 'react'
 import { UserContext } from '@/app/providers'
 import { supabase } from '@/utils/supabase/client'
+import { Button } from '@nextui-org/react'
 
 export default function LoginPage() {
 	const userContext = useContext(UserContext)
@@ -39,7 +40,7 @@ export default function LoginPage() {
 	const handleLogout = async () => {
 		const { error } = await supabase.auth.signOut()
 		if (error) console.log('Error logging out:', error.message)
-		else setUser(null) // Обновляем состояние пользователя
+		else setUser(null)
 	}
 
 	return (
@@ -47,10 +48,12 @@ export default function LoginPage() {
 			{user ? (
 				<>
 					<p>Привет, {user.email}</p>
-					<button onClick={handleLogout}>Выйти</button>
+					<Button color='danger' onClick={handleLogout}>
+						Выйти
+					</Button>
 				</>
 			) : (
-				<button onClick={handleGoogleLogin}>Войти через Google</button>
+				<Button onClick={handleGoogleLogin}>Войти через Google</Button>
 			)}
 		</div>
 	)

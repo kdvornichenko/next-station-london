@@ -2,7 +2,14 @@
 
 import { ArrowIcon } from '@/components/icons'
 import { supabase } from '@/utils/supabase/client'
-import { Button, Card, CardBody, CardFooter, Input } from '@nextui-org/react'
+import {
+	Button,
+	Card,
+	CardBody,
+	CardFooter,
+	Input,
+	Spinner,
+} from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
@@ -15,6 +22,8 @@ export default function Home() {
 	const [roomCode, setRoomCode] = useState<string>('')
 	const [user, setUser] = useState<User | null>(null)
 	const [errorMessage, setErrorMessage] = useState<string>('')
+	const [enterRoomIsLoading, setEnterRoomIsLoading] = useState<boolean>(false)
+	const [createRoomIsLoading, setCreateRoomIsLoading] = useState<boolean>(false)
 
 	useEffect(() => {
 		// Вызываем утилиту для проверки сессии
@@ -54,7 +63,7 @@ export default function Home() {
 		try {
 			const { data, error } = await supabase
 				.from('rooms')
-				.insert([{ name: roomName, uuid: user?.id }])
+				.insert([{ name: roomName, created_by: user?.id }])
 				.select()
 
 			if (error) {
@@ -82,6 +91,8 @@ export default function Home() {
 			return
 		}
 
+		setCreateRoomIsLoading(true)
+
 		let roomName = generateRoomName()
 		let roomExists = await checkRoomExists(roomName)
 
@@ -93,8 +104,10 @@ export default function Home() {
 
 		const isCreated = await createRoom(roomName)
 		if (isCreated) {
+			setCreateRoomIsLoading(false)
 			navigateToRoom(roomName)
 		} else {
+			setCreateRoomIsLoading(false)
 			console.error('Не удалось создать комнату')
 		}
 	}
@@ -112,11 +125,15 @@ export default function Home() {
 			return
 		}
 
+		setEnterRoomIsLoading(true)
+
 		const roomExists = await checkRoomExists(roomCode)
 		if (roomExists) {
 			navigateToRoom(roomCode)
+			setEnterRoomIsLoading(false)
 		} else {
 			setErrorMessage('Комната с таким кодом не найдена.')
+			setEnterRoomIsLoading(false)
 		}
 	}
 
@@ -144,7 +161,11 @@ export default function Home() {
 								} absolute right-1 top-1/2 -translate-y-1/2 bg-metro-pink animate-bg-fade`}
 								onClick={onRoomEnterClick}
 							>
-								<ArrowIcon color='#fff' size={20} />
+								{enterRoomIsLoading ? (
+									<Spinner />
+								) : (
+									<ArrowIcon color='#fff' size={20} />
+								)}
 							</Button>
 						</div>
 						{errorMessage && (
@@ -165,7 +186,7 @@ export default function Home() {
 						className='animate-gradient-shift bg-button-gradient [background-size:400%]'
 						onClick={handleCreateRoom}
 					>
-						Создать комнату
+						{createRoomIsLoading ? <Spinner /> : 'Создать комнату'}
 					</Button>
 				</CardFooter>
 			</Card>
