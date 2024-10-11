@@ -135,7 +135,7 @@ const Map = () => {
 
 				{/* Верхний и нижний шаблон карты */}
 				<UseSvg id='map-top-bot' className='pointer-events-none' />
-				<foreignObject width={'100%'} height={'100%'}>
+				<foreignObject width={'100%'} height={25}>
 					<div className='bg-black'>
 						<Checkbox onChange={e => setIsLineRemovable(e.target.checked)}>
 							Удалить линию
