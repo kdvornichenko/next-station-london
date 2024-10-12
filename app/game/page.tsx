@@ -184,8 +184,6 @@ export default function Game() {
 	return (
 		<Suspense fallback={<Loading />}>
 			<div className='h-full' style={gridStyles}>
-				<SettingsPanel />
-
 				<div className='grid [grid-template-columns:_3fr_6fr_3fr] p-4 h-full'>
 					<GameDashboard />
 

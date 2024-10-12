@@ -17,7 +17,6 @@ import { supabase } from '@/utils/supabase/client'
 import { useRoomStore } from '@/store/room.store'
 
 const GameDashboard = () => {
-	const [usedCards, setUsedCards] = useState<string[]>([])
 	const [selectedCards, setSelectedCards] = useState<JSX.Element[]>([])
 	const [availableCards, setAvailableCards] = useState<JSX.Element[]>([])
 	const [redCardsCounter, setRedCardsCounter] = useState<number>(0)
@@ -104,8 +103,6 @@ const GameDashboard = () => {
 
 							// Обновляем использованные карты
 							if (payload.new.used_cards) {
-								setUsedCards(payload.new.used_cards)
-
 								const mappedCards: (JSX.Element | null)[] =
 									payload.new.used_cards.map(getCardComponentByName)
 								const newSelectedCards = mappedCards.filter(
@@ -127,6 +124,16 @@ const GameDashboard = () => {
 									<span>
 										Использованные карты обновлены:{' '}
 										{payload.new.used_cards.join(', ')}
+									</span>
+								)
+							}
+
+							// Обновляем счётчик красных карт
+							if (payload.new.red_cards_count !== undefined) {
+								setRedCardsCounter(payload.new.red_cards_count)
+								addConsoleMessage(
+									<span>
+										Счётчик красных карт обновлён: {payload.new.red_cards_count}
 									</span>
 								)
 							}
@@ -168,7 +175,7 @@ const GameDashboard = () => {
 			try {
 				const { data: roomData, error } = await supabase
 					.from('rooms')
-					.select('used_cards, round, created_by')
+					.select('used_cards, round, created_by, red_cards_count')
 					.eq('name', roomName)
 					.single()
 
@@ -187,9 +194,6 @@ const GameDashboard = () => {
 				// Обновляем раунд
 				setRoundsCounter(roomData.round || 1)
 
-				// Обновляем выбранные карты
-				setUsedCards(roomData.used_cards || [])
-
 				const mappedCards: (JSX.Element | null)[] = roomData.used_cards.map(
 					getCardComponentByName
 				)
@@ -207,6 +211,9 @@ const GameDashboard = () => {
 					.map(getCardComponentByName)
 					.filter((card): card is JSX.Element => card !== null)
 				setAvailableCards(newAvailableCards)
+
+				// Обновляем счётчик красных карт
+				setRedCardsCounter(roomData.red_cards_count || 0)
 			} catch (err) {
 				console.error('Unexpected error fetching room data:', err)
 				addConsoleMessage(
@@ -220,21 +227,17 @@ const GameDashboard = () => {
 		}
 	}, [roomName, userId])
 
-	useEffect(() => {
-		console.log(userId)
-		console.log(isCreator)
-	}, [userId])
-
-	// Функция для атомарного добавления карты в used_cards
+	// Функция для атомарного добавления карты в used_cards и обновления счётчика красных карт
 	const addCardToUsedCards = async (
 		roomName: string,
-		cardName: string
+		cardName: string,
+		isRedCard: boolean
 	): Promise<boolean> => {
 		while (true) {
-			// Шаг 1: Получаем текущее состояние used_cards и updated_at
+			// Шаг 1: Получаем текущее состояние used_cards, red_cards_count и updated_at
 			const { data, error } = await supabase
 				.from('rooms')
-				.select('used_cards, updated_at')
+				.select('used_cards, red_cards_count, updated_at')
 				.eq('name', roomName)
 				.single()
 
@@ -248,6 +251,7 @@ const GameDashboard = () => {
 			}
 
 			const currentUsedCards: string[] = data.used_cards || []
+			const currentRedCardsCount = data.red_cards_count || 0
 			const currentUpdatedAt = data.updated_at
 
 			// Проверяем, не была ли карта уже использована
@@ -263,10 +267,15 @@ const GameDashboard = () => {
 			// Шаг 2: Добавляем новую карту к локальной копии used_cards
 			const newUsedCards = [...currentUsedCards, cardName]
 
+			// Увеличиваем счётчик красных карт, если карта красная
+			const newRedCardsCount = isRedCard
+				? currentRedCardsCount + 1
+				: currentRedCardsCount
+
 			// Шаг 3: Пытаемся обновить запись в базе данных с условием eq на updated_at
 			const { error: updateError } = await supabase
 				.from('rooms')
-				.update({ used_cards: newUsedCards })
+				.update({ used_cards: newUsedCards, red_cards_count: newRedCardsCount })
 				.eq('name', roomName)
 				.eq('updated_at', currentUpdatedAt)
 
@@ -312,8 +321,8 @@ const GameDashboard = () => {
 			return `${color}.${typeName}`
 		})()
 
-		// Атомарно добавляем карту в used_cards
-		const success = await addCardToUsedCards(roomName, cardName)
+		// Атомарно добавляем карту в used_cards и обновляем счётчик красных карт
+		const success = await addCardToUsedCards(roomName, cardName, isRedCard)
 
 		if (!success) {
 			// Если не удалось добавить карту, выходим из функции
@@ -330,7 +339,6 @@ const GameDashboard = () => {
 		)
 
 		// Обновляем локальное состояние
-		setUsedCards(prevUsedCards => [...prevUsedCards, cardName])
 		setSelectedCards(prevSelectedCards => [...prevSelectedCards, randomCard])
 
 		// Убираем карту из доступных
@@ -353,7 +361,7 @@ const GameDashboard = () => {
 
 		const { error } = await supabase
 			.from('rooms')
-			.update({ round: newRound, used_cards: [] })
+			.update({ round: newRound, used_cards: [], red_cards_count: 0 })
 			.eq('name', roomName)
 
 		if (error) {
@@ -366,7 +374,6 @@ const GameDashboard = () => {
 		}
 
 		// Обновляем локальные состояния
-		setUsedCards([])
 		setSelectedCards([])
 		setAvailableCards(
 			allCardNames

@@ -3,9 +3,10 @@ import Ability from './Ability'
 import { supabase } from '@/utils/supabase/client'
 import { useConsoleStore } from '@/store/console.store'
 import { useRoomStore } from '@/store/room.store'
+import { colors } from '@/store/colors.store'
 
 const Abilities = () => {
-	const defaultColors = ['#ED127B', '#00ADEF', '#40B93C', '#602F93']
+	const defaultColors = [colors.pink, colors.blue, colors.green, colors.purple]
 
 	// Способности с дефолтными цветами
 	const abilities: { name: string; component: React.FC<{ color: string }> }[] =
@@ -20,6 +21,7 @@ const Abilities = () => {
 		{
 			ability: React.FC<{ color: string; className: string }>
 			color: string
+			isUsed: boolean
 		}[]
 	>([])
 
@@ -46,13 +48,13 @@ const Abilities = () => {
 				return
 			}
 
-			// Если цвета есть в базе, применяем их, если нет — используем дефолтные
 			if (data.abilities_colors) {
 				const loadedColors = data.abilities_colors.map(
-					(ability: { ability: string; color: string }) => ({
+					(ability: { ability: string; color: string; isUsed: boolean }) => ({
 						ability: abilities.find(a => a.name === ability.ability)
 							?.component as React.FC<{ color: string }>,
 						color: ability.color,
+						isUsed: ability.isUsed, // Загружаем статус isUsed из базы данных
 					})
 				)
 				setAssignedColors(loadedColors)
@@ -77,12 +79,13 @@ const Abilities = () => {
 		const assigned = abilities.map((ability, index) => ({
 			ability: ability.component,
 			color: availableColors[index],
+			isUsed: false, // Устанавливаем isUsed по умолчанию
 		}))
 
 		setAssignedColors(assigned)
 	}
 
-	// Обновление цветов в таблице после нажатия на кнопку
+	// Функция для обновления цветов в таблице и их синхронизации
 	const refreshColors = async () => {
 		let shuffledColors = [...defaultColors]
 		shuffledColors.sort(() => Math.random() - 0.5)
@@ -90,14 +93,16 @@ const Abilities = () => {
 		const updatedAssignedColors = abilities.map((ability, index) => ({
 			ability: ability.component,
 			color: shuffledColors[index],
+			isUsed: false, // Сбрасываем isUsed при обновлении цветов
 		}))
 
 		setAssignedColors(updatedAssignedColors)
 
-		// Сохраняем обновленные цвета в таблице
+		// Обновляем цвета в базе данных
 		const updatedColorsForDB = abilities.map((ability, index) => ({
 			ability: ability.name,
 			color: shuffledColors[index],
+			isUsed: false, // Сбрасываем isUsed
 		}))
 
 		try {
@@ -127,7 +132,52 @@ const Abilities = () => {
 		}
 	}
 
-	// Подписка на обновления способностей в реальном времени
+	// Функция для отправки checked статуса и обновления isUsed
+	const toggleAbilityUsed = async (abilityName: string) => {
+		if (!roomName) return
+
+		// Обновляем локально
+		const updatedAssignedColors = assignedColors.map(assigned => ({
+			...assigned,
+			isUsed:
+				abilities.find(a => a.component === assigned.ability)?.name ===
+				abilityName
+					? !assigned.isUsed
+					: assigned.isUsed,
+		}))
+
+		setAssignedColors(updatedAssignedColors)
+
+		// Обновляем в базе данных
+		const updatedColorsForDB = updatedAssignedColors.map(assigned => ({
+			ability: abilities.find(a => a.component === assigned.ability)?.name,
+			color: assigned.color,
+			isUsed: assigned.isUsed,
+		}))
+
+		try {
+			const { error } = await supabase
+				.from('rooms')
+				.update({ abilities_colors: updatedColorsForDB })
+				.eq('name', roomName)
+
+			if (error) {
+				addConsoleMessage(
+					<span className='text-danger'>
+						Ошибка обновления статуса в базе данных: {error.message}
+					</span>
+				)
+			} else {
+				addConsoleMessage(
+					<span className='text-success'>Статус способностей обновлён</span>
+				)
+			}
+		} catch (err) {
+			addConsoleMessage(<span className='text-danger'>Ошибка обновления</span>)
+		}
+	}
+
+	// Подписка на изменения в статусе isUsed для всех пользователей
 	useEffect(() => {
 		if (!roomName) return
 
@@ -144,15 +194,20 @@ const Abilities = () => {
 				payload => {
 					if (payload.eventType === 'UPDATE') {
 						const updatedColors = payload.new.abilities_colors.map(
-							(ability: { ability: string; color: string }) => ({
+							(ability: {
+								ability: string
+								color: string
+								isUsed: boolean
+							}) => ({
 								ability: abilities.find(a => a.name === ability.ability)
 									?.component as React.FC<{ color: string }>,
 								color: ability.color,
+								isUsed: ability.isUsed,
 							})
 						)
 						setAssignedColors(updatedColors)
 						addConsoleMessage(
-							<span>Цвета способностей обновлены в реальном времени</span>
+							<span>Статус способностей обновлен в реальном времени</span>
 						)
 					}
 				}
@@ -172,22 +227,31 @@ const Abilities = () => {
 	return (
 		<section>
 			<div className='grid grid-flow-col gap-x-3 mb-4'>
-				{assignedColors.map(({ ability: AbilityComponent, color }, index) => (
-					<div key={index} className='rounded-xl overflow-hidden'>
-						<input
-							type='checkbox'
-							id={color}
-							name={color}
-							className='hidden peer'
-						/>
-						<label
-							htmlFor={color}
-							className='peer-checked:opacity-30 cursor-pointer transition-opacity'
-						>
-							<AbilityComponent color={color} className='w-full h-full ' />
-						</label>
-					</div>
-				))}
+				{assignedColors.map(
+					({ ability: AbilityComponent, color, isUsed }, index) => (
+						<div key={index} className='rounded-xl overflow-hidden'>
+							<input
+								type='checkbox'
+								id={color}
+								name={color}
+								checked={isUsed}
+								onChange={() =>
+									toggleAbilityUsed(
+										abilities.find(a => a.component === AbilityComponent)
+											?.name || ''
+									)
+								}
+								className='hidden peer'
+							/>
+							<label
+								htmlFor={color}
+								className='peer-checked:opacity-30 cursor-pointer transition-opacity'
+							>
+								<AbilityComponent color={color} className='w-full h-full ' />
+							</label>
+						</div>
+					)
+				)}
 			</div>
 
 			{/* Кнопка для обновления цветов */}
