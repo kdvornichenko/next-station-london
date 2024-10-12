@@ -44,7 +44,7 @@ const ControlPanel = () => {
 			case 'console':
 				return <Console />
 			default:
-				break
+				return <Console />
 		}
 	}
 
