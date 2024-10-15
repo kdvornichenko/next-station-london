@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import styles from '@/styles/main.module.scss'
-import Card from './Card'
+import React, { useContext, useEffect } from 'react'
 import { startColorSwitcher } from '@/utils/colorSwitcher'
 import { useColorStore } from '@/store/colors.store'
 import {
@@ -15,162 +13,36 @@ import Abilities from './abilities'
 import { useConsoleStore } from '@/store/console.store'
 import { supabase } from '@/utils/supabase/client'
 import { useRoomStore } from '@/store/room.store'
+import Cards from './Cards/Cards'
+import { allCardNames, useGameStore } from '@/store/game.store'
+import { getCardComponentByName } from '@/utils/cards/getCardComponentByName'
 
 const GameDashboard = () => {
-	const [selectedCards, setSelectedCards] = useState<JSX.Element[]>([])
-	const [availableCards, setAvailableCards] = useState<JSX.Element[]>([])
-	const [redCardsCounter, setRedCardsCounter] = useState<number>(0)
-	const [roundsCounter, setRoundsCounter] = useState<number>(1)
-	const [isRoundOver, setIsRoundOver] = useState<boolean>(false)
-	const [isGameOver, setIsGameOver] = useState<boolean>(false)
-	const [userId, setUserId] = useState<string | null>(null)
-	const [isCreator, setIsCreator] = useState<boolean>(false)
+	const {
+		redCardsCounter,
+		setRedCardsCounter,
+		roundsCounter,
+		setRoundsCounter,
+		isRoundOver,
+		setIsRoundOver,
+		isGameOver,
+		setIsGameOver,
+		userId,
+		isCreator,
+		setIsCreator,
+		setSelectedCards,
+		setAvailableCards,
+		setIsCardsLoading,
+	} = useGameStore()
+
 	const { setCurrentColor } = useColorStore()
 	const { addConsoleMessage } = useConsoleStore()
 	const { roomName } = useRoomStore()
 
-	const allCardNames = [
-		'Branch',
-		'Blue.Any',
-		'Blue.Circle',
-		'Blue.Rectangle',
-		'Blue.Triangle',
-		'Red.Any',
-		'Red.Circle',
-		'Red.Pentagon',
-		'Red.Rectangle',
-		'Red.Triangle',
-	]
-
-	const getCardComponentByName = (cardName: string): JSX.Element | null => {
-		const [color, type] = cardName.includes('.')
-			? cardName.split('.')
-			: [cardName, null]
-
-		switch (color) {
-			case 'Branch':
-				return <Card.Branch />
-			case 'Blue': {
-				if (type && type in Card.Blue) {
-					const Component = Card.Blue[type as keyof typeof Card.Blue]
-					return <Component />
-				} else {
-					console.error(`Неизвестный тип карты для Blue: ${type}`)
-					return null
-				}
-			}
-			case 'Red': {
-				if (type && type in Card.Red) {
-					const Component = Card.Red[type as keyof typeof Card.Red]
-					return <Component data-card-red />
-				} else {
-					console.error(`Неизвестный тип карты для Red: ${type}`)
-					return null
-				}
-			}
-			default:
-				console.error(`Неизвестное имя карты: ${cardName}`)
-				return null
-		}
-	}
-
-	// Подписка на изменения в Supabase
 	useEffect(() => {
-		const subscribeToRoomChanges = async () => {
-			if (!roomName) return
-
-			const channel = supabase
-				.channel('update')
-				.on(
-					'postgres_changes',
-					{
-						event: '*',
-						schema: 'public',
-						table: 'rooms',
-						filter: `name=eq.${roomName}`,
-					},
-					payload => {
-						console.log('Change received!', payload)
-
-						if (payload.eventType === 'UPDATE') {
-							// Обновляем раунд
-							if (payload.new.round) {
-								setRoundsCounter(payload.new.round)
-								addConsoleMessage(
-									<span>Раунд обновлен: {payload.new.round}</span>
-								)
-							}
-
-							// Обновляем использованные карты
-							if (payload.new.used_cards) {
-								const mappedCards: (JSX.Element | null)[] =
-									payload.new.used_cards.map(getCardComponentByName)
-								const newSelectedCards = mappedCards.filter(
-									(card): card is JSX.Element => card !== null
-								)
-
-								setSelectedCards(newSelectedCards)
-
-								// Обновляем доступные карты
-								const newAvailableCardNames = allCardNames.filter(
-									cardName => !payload.new.used_cards.includes(cardName)
-								)
-								const newAvailableCards = newAvailableCardNames
-									.map(getCardComponentByName)
-									.filter((card): card is JSX.Element => card !== null)
-								setAvailableCards(newAvailableCards)
-
-								addConsoleMessage(
-									<span>
-										Использованные карты обновлены:{' '}
-										{payload.new.used_cards.join(', ')}
-									</span>
-								)
-							}
-
-							// Обновляем счётчик красных карт
-							if (payload.new.red_cards_count !== undefined) {
-								setRedCardsCounter(payload.new.red_cards_count)
-								addConsoleMessage(
-									<span>
-										Счётчик красных карт обновлён: {payload.new.red_cards_count}
-									</span>
-								)
-							}
-						}
-					}
-				)
-				.subscribe()
-
-			return () => {
-				supabase.removeChannel(channel)
-			}
-		}
-
-		subscribeToRoomChanges()
-
-		// Получение сессии пользователя
-		const checkSession = async () => {
-			const {
-				data: { session },
-				error,
-			} = await supabase.auth.getSession()
-
-			if (error || !session) {
-				addConsoleMessage(
-					<span className='text-danger'>Пользователь не авторизован</span>
-				)
-				return
-			}
-
-			setUserId(session.user.id)
-		}
-
-		checkSession()
-
-		// Fetch initial data
+		setIsCardsLoading(true)
 		const fetchRoomData = async () => {
-			if (!roomName || !userId) return // Проверяем наличие userId перед выполнением
+			if (!roomName || !userId) return
 
 			try {
 				const { data: roomData, error } = await supabase
@@ -182,40 +54,19 @@ const GameDashboard = () => {
 				if (error) {
 					addConsoleMessage(
 						<span className='text-danger'>
-							Ошибка получения карт: {error.message}
+							Ошибка получения данных комнаты: {error.message}
 						</span>
 					)
 					return
 				}
 
-				// Установка isCreator после того, как userId доступен
+				// Устанавливаем данные комнаты
 				setIsCreator(roomData.created_by === userId)
-
-				// Обновляем раунд
 				setRoundsCounter(roomData.round || 1)
-
-				const mappedCards: (JSX.Element | null)[] = roomData.used_cards.map(
-					getCardComponentByName
-				)
-				const newSelectedCards = mappedCards.filter(
-					(card): card is JSX.Element => card !== null
-				)
-
-				setSelectedCards(newSelectedCards)
-
-				// Обновляем доступные карты
-				const newAvailableCardNames = allCardNames.filter(
-					cardName => !roomData.used_cards.includes(cardName)
-				)
-				const newAvailableCards = newAvailableCardNames
-					.map(getCardComponentByName)
-					.filter((card): card is JSX.Element => card !== null)
-				setAvailableCards(newAvailableCards)
-
-				// Обновляем счётчик красных карт
+				updateCards(roomData.used_cards)
 				setRedCardsCounter(roomData.red_cards_count || 0)
 			} catch (err) {
-				console.error('Unexpected error fetching room data:', err)
+				console.error('Ошибка получения данных комнаты:', err)
 				addConsoleMessage(
 					<span className='text-warning'>Ошибка загрузки данных комнаты</span>
 				)
@@ -227,129 +78,29 @@ const GameDashboard = () => {
 		}
 	}, [roomName, userId])
 
-	// Функция для атомарного добавления карты в used_cards и обновления счётчика красных карт
-	const addCardToUsedCards = async (
-		roomName: string,
-		cardName: string,
-		isRedCard: boolean
-	): Promise<boolean> => {
-		while (true) {
-			// Шаг 1: Получаем текущее состояние used_cards, red_cards_count и updated_at
-			const { data, error } = await supabase
-				.from('rooms')
-				.select('used_cards, red_cards_count, updated_at')
-				.eq('name', roomName)
-				.single()
-
-			if (error) {
-				addConsoleMessage(
-					<span className='text-danger'>
-						Ошибка получения использованных карт: {error.message}
-					</span>
-				)
-				return false
-			}
-
-			const currentUsedCards: string[] = data.used_cards || []
-			const currentRedCardsCount = data.red_cards_count || 0
-			const currentUpdatedAt = data.updated_at
-
-			// Проверяем, не была ли карта уже использована
-			if (currentUsedCards.includes(cardName)) {
-				addConsoleMessage(
-					<span className='text-warning'>
-						Карта {cardName} уже использована
-					</span>
-				)
-				return false
-			}
-
-			// Шаг 2: Добавляем новую карту к локальной копии used_cards
-			const newUsedCards = [...currentUsedCards, cardName]
-
-			// Увеличиваем счётчик красных карт, если карта красная
-			const newRedCardsCount = isRedCard
-				? currentRedCardsCount + 1
-				: currentRedCardsCount
-
-			// Шаг 3: Пытаемся обновить запись в базе данных с условием eq на updated_at
-			const { error: updateError } = await supabase
-				.from('rooms')
-				.update({ used_cards: newUsedCards, red_cards_count: newRedCardsCount })
-				.eq('name', roomName)
-				.eq('updated_at', currentUpdatedAt)
-
-			if (updateError) {
-				// Если произошла ошибка, проверяем, не связано ли это с несоответствием условия
-				if (
-					updateError.code === 'PGRST116' ||
-					updateError.message.includes('No rows')
-				) {
-					// Это означает, что условие eq не выполнено, нужно повторить попытку
-					continue
-				} else {
-					// Иная ошибка
-					addConsoleMessage(
-						<span className='text-danger'>
-							Ошибка обновления использованных карт: {updateError.message}
-						</span>
-					)
-					return false
-				}
-			}
-
-			// Обновление успешно
-			return true
-		}
-	}
-
-	// Выбор новой карты
-	const onCardAreaClick = async () => {
-		if (availableCards.length === 0 || !roomName) return
-
-		const randomIndex = Math.floor(Math.random() * availableCards.length)
-		const randomCard = availableCards[randomIndex]
-
-		// Определяем, является ли карта красной
-		const isRedCard = randomCard.props && randomCard.props['data-card-red']
-
-		// Формируем имя карты с префиксом цвета
-		const cardName = (() => {
-			if (randomCard.type.name === 'Branch') return 'Branch'
-			const color = isRedCard ? 'Red' : 'Blue'
-			const typeName = randomCard.type.name
-			return `${color}.${typeName}`
-		})()
-
-		// Атомарно добавляем карту в used_cards и обновляем счётчик красных карт
-		const success = await addCardToUsedCards(roomName, cardName, isRedCard)
-
-		if (!success) {
-			// Если не удалось добавить карту, выходим из функции
-			return
-		}
-
+	useEffect(() => {
 		addConsoleMessage(
-			<span>
-				Выпала карта:{' '}
-				<span className={isRedCard ? 'text-card-red' : 'text-card-blue'}>
-					{cardName}
-				</span>
-			</span>
+			<span>Счётчик красных карт обновлён: {redCardsCounter}</span>
 		)
+	}, [redCardsCounter])
 
-		// Обновляем локальное состояние
-		setSelectedCards(prevSelectedCards => [...prevSelectedCards, randomCard])
+	const updateCards = (usedCards: string[]) => {
+		const mappedCards = usedCards
+			.map(getCardComponentByName)
+			.filter((card): card is JSX.Element => card !== null) // Фильтруем null значения
 
-		// Убираем карту из доступных
-		setAvailableCards(prevAvailableCards =>
-			prevAvailableCards.filter((_, index) => index !== randomIndex)
+		setSelectedCards(mappedCards)
+
+		const availableCardNames = allCardNames.filter(
+			cardName => !usedCards.includes(cardName)
 		)
+		const availableCards = availableCardNames
+			.map(getCardComponentByName)
+			.filter((card): card is JSX.Element => card !== null) // Фильтруем null значения
 
-		// Увеличиваем счётчик, если карта красная
-		if (isRedCard) {
-			setRedCardsCounter(prev => prev + 1)
-		}
+		setAvailableCards(availableCards)
+
+		setIsCardsLoading(false)
 	}
 
 	// Сброс карт и обновление раунда
@@ -424,18 +175,7 @@ const GameDashboard = () => {
 			<Divider />
 
 			<CardBody>
-				<div className={styles.cards__selected}>
-					{selectedCards.map((card, index) => (
-						<React.Fragment key={index}>{card}</React.Fragment>
-					))}
-					<div
-						className={`w-full max-w-sm aspect-video m-auto border-2 border-dashed border-slate-400 rounded-2xl cursor-pointer transition-all hover:border-solid hover:border-slate-50 ${
-							(isRoundOver || isGameOver || !isCreator) &&
-							'pointer-events-none opacity-0'
-						}`}
-						onClick={onCardAreaClick}
-					/>
-				</div>
+				<Cards />
 			</CardBody>
 
 			<Divider />

@@ -19,6 +19,7 @@ import { supabase } from '@/utils/supabase/client'
 import GameDashboard from '@/components/GameDashboard'
 import ControlPanel from '@/components/ControlPanel'
 import { useConsoleStore } from '@/store/console.store'
+import { useGameStore } from '@/store/game.store'
 // Определяем тип для CSS-переменной
 interface CustomCSSProperties extends CSSProperties {
 	'--nsl-current-color'?: TColorValues | null
@@ -32,6 +33,7 @@ export default function Game() {
 	const isInitialMount = useRef(true)
 	const hasFetchedRoomData = useRef(false)
 	const { addConsoleMessage } = useConsoleStore()
+	const { setUserId } = useGameStore()
 
 	// Проверяем, инициализирован ли контекст
 	if (!userContext) {
@@ -92,6 +94,8 @@ export default function Game() {
 			}
 
 			const user = session.user
+
+			setUserId(user.id)
 
 			// Проверяем наличие комнаты и загружаем данные о комнате
 			if (roomName && !hasFetchedRoomData.current) {

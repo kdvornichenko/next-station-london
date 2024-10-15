@@ -1,4 +1,3 @@
-import { colors } from '@/store/colors.store'
 import { TCard } from '@/types/card.types'
 import { FC } from 'react'
 

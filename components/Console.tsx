@@ -9,7 +9,7 @@ const Console = () => {
 	const { consoleMessages, clearConsoleMessages } = useConsoleStore()
 
 	useEffect(() => {
-		consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+		consoleEndRef.current?.scrollIntoView()
 	}, [consoleMessages])
 
 	return (

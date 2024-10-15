@@ -49,7 +49,7 @@ const ControlPanel = () => {
 	}
 
 	return (
-		<NextUICard className='card shadow-current-color rounded-3xl overflow-visible'>
+		<NextUICard className='card shadow-current-color rounded-3xl overflow-auto'>
 			<CardHeader className='gap-x-3 justify-between'>
 				<div className='flex gap-x-3'>
 					{/* Отображение кнопок управления */}

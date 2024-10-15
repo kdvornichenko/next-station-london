@@ -4,6 +4,7 @@ import { supabase } from '@/utils/supabase/client'
 import { useConsoleStore } from '@/store/console.store'
 import { useRoomStore } from '@/store/room.store'
 import { colors } from '@/store/colors.store'
+import { Spinner } from '@nextui-org/react'
 
 const Abilities = () => {
 	const defaultColors = [colors.pink, colors.blue, colors.green, colors.purple]
@@ -25,12 +26,16 @@ const Abilities = () => {
 		}[]
 	>([])
 
+	const [isLoading, setIsLoading] = useState<boolean>(true)
+
 	const { roomName } = useRoomStore()
 	const { addConsoleMessage } = useConsoleStore()
 
 	// Загрузка цветов способностей из таблицы
 	const fetchAbilityColors = async () => {
 		if (!roomName) return
+
+		setIsLoading(true)
 
 		try {
 			const { data, error } = await supabase
@@ -69,6 +74,8 @@ const Abilities = () => {
 				</span>
 			)
 		}
+
+		setIsLoading(false)
 	}
 
 	// Функция для присвоения цветов способностям
@@ -182,29 +189,44 @@ const Abilities = () => {
 		if (!roomName) return
 
 		const channel = supabase
-			.channel('abilities-update')
+			.channel('public:rooms')
 			.on(
 				'postgres_changes',
 				{
-					event: '*',
+					event: 'UPDATE',
 					schema: 'public',
 					table: 'rooms',
 					filter: `name=eq.${roomName}`,
 				},
 				payload => {
-					if (payload.eventType === 'UPDATE') {
-						const updatedColors = payload.new.abilities_colors.map(
-							(ability: {
-								ability: string
-								color: string
-								isUsed: boolean
-							}) => ({
-								ability: abilities.find(a => a.name === ability.ability)
-									?.component as React.FC<{ color: string }>,
-								color: ability.color,
-								isUsed: ability.isUsed,
-							})
-						)
+					const updatedColors = payload.new.abilities_colors.map(
+						(ability: { ability: string; color: string; isUsed: boolean }) => ({
+							ability: abilities.find(a => a.name === ability.ability)
+								?.component as React.FC<{ color: string }>,
+							color: ability.color,
+							isUsed: ability.isUsed,
+						})
+					)
+
+					// Функция для сравнения текущих данных с новыми
+					const isEqual = (
+						arr1: typeof assignedColors,
+						arr2: typeof assignedColors
+					) => {
+						if (arr1.length !== arr2.length) return false
+						for (let i = 0; i < arr1.length; i++) {
+							if (
+								arr1[i].color !== arr2[i].color ||
+								arr1[i].isUsed !== arr2[i].isUsed
+							) {
+								return false
+							}
+						}
+						return true
+					}
+
+					// Сравниваем новые данные с текущим состоянием
+					if (!isEqual(assignedColors, updatedColors)) {
 						setAssignedColors(updatedColors)
 						addConsoleMessage(
 							<span>Статус способностей обновлен в реальном времени</span>
@@ -217,7 +239,7 @@ const Abilities = () => {
 		return () => {
 			supabase.removeChannel(channel)
 		}
-	}, [roomName])
+	}, [roomName, assignedColors])
 
 	// Загрузка цветов при подключении
 	useEffect(() => {
@@ -225,43 +247,52 @@ const Abilities = () => {
 	}, [roomName])
 
 	return (
-		<section>
-			<div className='grid grid-flow-col gap-x-3 mb-4'>
-				{assignedColors.map(
-					({ ability: AbilityComponent, color, isUsed }, index) => (
-						<div key={index} className='rounded-xl overflow-hidden'>
-							<input
-								type='checkbox'
-								id={color}
-								name={color}
-								checked={isUsed}
-								onChange={() =>
-									toggleAbilityUsed(
-										abilities.find(a => a.component === AbilityComponent)
-											?.name || ''
-									)
-								}
-								className='hidden peer'
-							/>
-							<label
-								htmlFor={color}
-								className='peer-checked:opacity-30 cursor-pointer transition-opacity'
-							>
-								<AbilityComponent color={color} className='w-full h-full ' />
-							</label>
-						</div>
-					)
-				)}
-			</div>
+		<div className='flex flex-col gap-y-3 w-full'>
+			{isLoading ? (
+				<Spinner />
+			) : (
+				<>
+					<div className='grid grid-flow-col gap-x-3'>
+						{assignedColors.map(
+							({ ability: AbilityComponent, color, isUsed }, index) => (
+								<div key={index} className='rounded-xl overflow-hidden'>
+									<input
+										type='checkbox'
+										id={color}
+										name={color}
+										checked={isUsed}
+										onChange={() =>
+											toggleAbilityUsed(
+												abilities.find(a => a.component === AbilityComponent)
+													?.name || ''
+											)
+										}
+										className='hidden peer'
+									/>
+									<label
+										htmlFor={color}
+										className='peer-checked:opacity-30 cursor-pointer transition-opacity'
+									>
+										<AbilityComponent
+											color={color}
+											className='w-full h-full '
+										/>
+									</label>
+								</div>
+							)
+						)}
+					</div>
 
-			{/* Кнопка для обновления цветов */}
-			<button
-				onClick={refreshColors}
-				className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors'
-			>
-				Refresh Colors
-			</button>
-		</section>
+					{/* Кнопка для обновления цветов */}
+					<button
+						onClick={refreshColors}
+						className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors'
+					>
+						Refresh Colors
+					</button>
+				</>
+			)}
+		</div>
 	)
 }
 
