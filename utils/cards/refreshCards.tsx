@@ -40,7 +40,7 @@ export const refreshCards = async (
 	setSelectedCards([])
 	setAvailableCards(
 		allCardNames
-			.map(cardName => getCardComponentByName(cardName, Card))
+			.map(cardName => getCardComponentByName(cardName))
 			.filter((card): card is JSX.Element => card !== null)
 	)
 	setRedCardsCounter(0) // сброс локального счётчика красных карт
