@@ -23,7 +23,7 @@ export const refreshCards = async (
 		.update({
 			round: newRound,
 			used_cards: [],
-			red_cards_count: 0, // сброс счётчика красных карт
+			red_cards_count: 0,
 		})
 		.eq('name', roomName)
 

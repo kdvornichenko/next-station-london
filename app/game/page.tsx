@@ -33,7 +33,7 @@ export default function Game() {
 	const isInitialMount = useRef(true)
 	const hasFetchedRoomData = useRef(false)
 	const { addConsoleMessage } = useConsoleStore()
-	const { setUserId } = useGameStore()
+	const { setUser } = useGameStore()
 
 	// Проверяем, инициализирован ли контекст
 	if (!userContext) {
@@ -95,7 +95,7 @@ export default function Game() {
 
 			const user = session.user
 
-			setUserId(user.id)
+			setUser(user)
 
 			// Проверяем наличие комнаты и загружаем данные о комнате
 			if (roomName && !hasFetchedRoomData.current) {
@@ -192,7 +192,7 @@ export default function Game() {
 					<GameDashboard />
 
 					<Map />
-					{/* Правый сайдбар */}
+
 					<ControlPanel />
 				</div>
 			</div>

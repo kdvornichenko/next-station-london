@@ -27,7 +27,7 @@ const GameDashboard = () => {
 		setIsRoundOver,
 		isGameOver,
 		setIsGameOver,
-		userId,
+		user,
 		isCreator,
 		setIsCreator,
 		setSelectedCards,
@@ -42,7 +42,7 @@ const GameDashboard = () => {
 	useEffect(() => {
 		setIsCardsLoading(true)
 		const fetchRoomData = async () => {
-			if (!roomName || !userId) return
+			if (!roomName || !user?.id) return
 
 			try {
 				const { data: roomData, error } = await supabase
@@ -61,7 +61,7 @@ const GameDashboard = () => {
 				}
 
 				// Устанавливаем данные комнаты
-				setIsCreator(roomData.created_by === userId)
+				setIsCreator(roomData.created_by === user.id)
 				setRoundsCounter(roomData.round || 1)
 				updateCards(roomData.used_cards)
 				setRedCardsCounter(roomData.red_cards_count || 0)
@@ -73,10 +73,10 @@ const GameDashboard = () => {
 			}
 		}
 
-		if (userId) {
+		if (user?.id) {
 			fetchRoomData()
 		}
-	}, [roomName, userId])
+	}, [roomName, user])
 
 	useEffect(() => {
 		addConsoleMessage(

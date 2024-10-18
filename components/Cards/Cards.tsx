@@ -23,7 +23,7 @@ const Cards = () => {
 		setRoundsCounter,
 		selectedCards,
 		setSelectedCards,
-		userId,
+		user,
 		isCardsLoading,
 	} = useGameStore()
 	const { roomName } = useRoomStore()
@@ -49,7 +49,7 @@ const Cards = () => {
 
 	useEffect(() => {
 		const subscribeToRoomChanges = async () => {
-			if (!roomName || !userId) return
+			if (!roomName || !user?.id) return
 
 			const updateRoomData = (payload: { new: Room }) => {
 				// Обновляем раунд

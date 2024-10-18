@@ -1,3 +1,4 @@
+import { User } from "@supabase/supabase-js";
 import { create } from "zustand";
 
 export const allCardNames = [
@@ -32,8 +33,8 @@ interface IGameState {
     isCardsLoading: boolean
     setIsCardsLoading: (isLoading: boolean) => void
 
-    userId: string
-    setUserId: (id: string) => void
+    user: User | null | undefined
+    setUser: (user: IGameState['user']) => void
 
     availableCards: JSX.Element[]
     setAvailableCards: (cards: IGameState['availableCards']) => void
@@ -61,8 +62,8 @@ export const useGameStore = create<IGameState>((set) => ({
     isCardsLoading: false,
     setIsCardsLoading: (isCardsLoading: boolean) => set({ isCardsLoading }),
 
-    userId: '',
-    setUserId: (userId: string) => set({ userId }),
+    user: null,
+    setUser: (user: IGameState['user']) => set({ user }),
 
     availableCards: [],
     setAvailableCards: (availableCards: IGameState['availableCards']) => set({ availableCards }),
