@@ -120,7 +120,7 @@ const Abilities = () => {
 		}
 
 		const availableAbilities = assignedAbilities.filter(
-			ability => !ability.isUsed
+			ability => !ability.player?.id
 		)
 
 		if (availableAbilities.length === 0) {
