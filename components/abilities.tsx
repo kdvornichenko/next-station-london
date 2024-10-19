@@ -5,15 +5,8 @@ import { useConsoleStore } from '@/store/console.store'
 import { useRoomStore } from '@/store/room.store'
 import { Spinner } from '@nextui-org/react'
 import { useGameStore } from '@/store/game.store'
-import { User } from '@supabase/supabase-js'
 import { colors, TColorValues, useColorStore } from '@/store/colors.store'
-
-interface AbilityData {
-	ability: string
-	color: string
-	isUsed: boolean
-	player?: User | null
-}
+import { AbilityData } from '@/types/abilities.types'
 
 interface AssignedAbility extends AbilityData {
 	component: FC<{ color: string; className?: string }>
@@ -132,14 +125,22 @@ const Abilities = () => {
 			return
 		}
 
-		const randomAbility =
-			availableAbilities[Math.floor(Math.random() * availableAbilities.length)]
+		const randomIndex = Math.floor(Math.random() * availableAbilities.length)
+		const randomAbility = availableAbilities[randomIndex]
 
 		setCurrentColor(randomAbility.color as TColorValues)
 
 		const updatedAbilities = assignedAbilities.map(ability =>
 			ability === randomAbility
-				? { ...ability, isUsed: false, player: user }
+				? {
+						...ability,
+						isUsed: false,
+						player: {
+							id: user?.id,
+							name: user?.user_metadata.full_name,
+							email: user?.email,
+						},
+					}
 				: ability
 		)
 
@@ -188,9 +189,11 @@ const Abilities = () => {
 						if (
 							JSON.stringify(prevAbilities) !== JSON.stringify(updatedAbilities)
 						) {
-							addConsoleMessage(
-								<span>Статус способностей обновлен в реальном времени</span>
-							)
+							setTimeout(() => {
+								addConsoleMessage(
+									<span>Статус способностей обновлен в реальном времени</span>
+								)
+							}, 0)
 							return updatedAbilities
 						}
 						return prevAbilities
@@ -251,7 +254,7 @@ const Abilities = () => {
 										<AbilityComponent color={color} className='w-full h-full' />
 									</label>
 									<div className='flex flex-col text-sm'>
-										<span>{player?.user_metadata.full_name}</span>
+										<span>{player?.name}</span>
 										<span>{player?.email}</span>
 									</div>
 								</div>

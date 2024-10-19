@@ -107,6 +107,30 @@ const GameDashboard = () => {
 	const refreshCards = async () => {
 		if (!isRoundOver) return
 
+		try {
+			const { data: roomData, error } = await supabase
+				.from('rooms')
+				.select('abilities_colors')
+				.eq('name', roomName)
+				.single()
+
+			if (error) {
+				addConsoleMessage(
+					<span className='text-danger'>
+						Ошибка получения данных комнаты: {error.message}
+					</span>
+				)
+				return
+			} else {
+				console.log(roomData)
+			}
+		} catch (err) {
+			console.error('Ошибка получения данных комнаты:', err)
+			addConsoleMessage(
+				<span className='text-warning'>Ошибка загрузки данных комнаты</span>
+			)
+		}
+
 		const newRound = roundsCounter + 1
 		setRoundsCounter(newRound)
 
